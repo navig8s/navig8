@@ -3,15 +3,23 @@ import { useRepoStore } from '@/store/repo'
 import { storeToRefs } from 'pinia'
 
 const repoStore = useRepoStore()
-const { count } = storeToRefs(repoStore)
-const { increment } = repoStore
+const { usefulChartFiles } = storeToRefs(repoStore)
 </script>
 
 <template>
   <h1>{{ msg }}</h1>
 
   <div class="card">
-    <button type="button" @click="increment">count is {{ count }}</button>
+    <!--    <button type="button" @click="increment">count is {{ count }}</button>-->
+    <p>
+      Readme is
+      {{
+        usefulChartFiles.foldData(
+          () => 'No Data',
+          (data) => data.readme.slice(0, 100) + '...',
+        )
+      }}
+    </p>
     <p>
       Edit
       <code>components/HelloWorld.vue</code> to test HMR

@@ -61,24 +61,13 @@ export class RemoteData<E, T> implements ResponseDataContract<E, T> {
   ) {}
 
   pending() {
-    this.state = 'Pending'
-    this.error = null
-
-    return this
+    return new RemoteData<E, T>('Pending', this.data, null)
   }
   fulfilled(data: T) {
-    this.state = 'Fulfilled'
-    this.data = data
-    this.error = null
-
-    return this
+    return new RemoteData<E, T>('Fulfilled', data, null)
   }
   rejected(error: E | null) {
-    this.state = 'Rejected'
-    this.data = null
-    this.error = error
-
-    return this
+    return new RemoteData<E, T>('Rejected', null, error)
   }
 
   fold<R>(onNone: () => R, onRejected: (error: E) => R, onSome: (data: T) => R) {
