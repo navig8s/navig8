@@ -3,12 +3,15 @@ import { useRequest } from '@/httpRequest/useRequest'
 import yaml from 'js-yaml'
 import untar, { FileResponse as ArchiveFile } from 'js-untar'
 import pako from 'pako'
-import { prop } from 'ramda'
-import { UsefulChartFiles, JSONSchema } from '@/store/repo/types'
+import { isNil, prop } from 'ramda'
+import { UsefulChartFiles, JSONSchema, chartDecoder } from '@/model/Repo'
 import { throwInline } from '@/utils/error'
-import { chartManifestDecoder, repoManifestDecoder } from '@/store/repo/decoders'
+import { chartManifestDecoder, repoManifestDecoder } from '@/model/Repo'
 import { corsProxyRequest } from '@/httpRequest/corsProxyRequest'
-import { FileNotFoundError } from '@/store/repo/errors'
+import { FileNotFoundError } from './error'
+import { decodeWith } from '@/decoder'
+import { readAsJSON, readAsString } from '@/utils/arrayBuffer'
+import { computed } from 'vue'
 
 // TODO this values should become env variables
 const ENTRY = 'k10'
@@ -18,26 +21,43 @@ const getRepoManifest = (url: string) =>
   corsProxyRequest(url.replace(/\/$/, '') + '/index.yaml')
     .then((response) => response.text())
     .then((raw) => yaml.load(raw, { filename: 'index.yaml', json: true }))
-    .then((manifest) => repoManifestDecoder(ENTRY).decodeToPromise(manifest))
-    .then((manifest) => chartManifestDecoder.decodeToPromise(manifest.entries[ENTRY][0]))
+    .then(decodeWith(repoManifestDecoder(ENTRY)))
+    .then((manifest) => manifest.entries[ENTRY][0])
+    .then(decodeWith(chartManifestDecoder))
 
-const findUsefulFilesInArchive = (files: ArchiveFile[]): UsefulChartFiles => {
-  const find = <N extends boolean = false>(name: string, throwOnNotFound?: N) => {
-    const file = files.find((file) => name.toLowerCase() === file.name.toLowerCase())
+const findUsefulFilesInArchive = async (files: ArchiveFile[]): Promise<UsefulChartFiles> => {
+  const find = <
+    A extends 'json' | 'string' | 'yaml',
+    RT extends A extends 'string' ? string : Record<string, any>,
+    R extends N extends true ? RT : RT | undefined,
+    N extends boolean = false,
+  >(
+    variants: string[],
+    readAs: A,
+    throwOnNotFound?: N,
+  ): R => {
+    const file = files.find((file) =>
+      variants.some((name) => `${ENTRY}/${name}`.toLowerCase() === file.name.toLowerCase()),
+    )
 
-    throwOnNotFound === true && file === undefined && throwInline(new FileNotFoundError(name))
+    throwOnNotFound === true &&
+      file === undefined &&
+      throwInline(new FileNotFoundError(variants[0]))
 
-    return file as N extends true ? ArchiveFile : ArchiveFile | undefined
+    if (!isNil(file) && readAs === 'string') return readAsString(file.buffer) as any
+    if (!isNil(file) && readAs === 'yaml')
+      return yaml.load(readAsString(file.buffer), { filename: variants[0], json: true }) as any
+    if (!isNil(file) && readAs === 'json') return readAsJSON(file.buffer)
+
+    return undefined as any
   }
 
   return {
-    readme: find(`${ENTRY}/README.md`)?.readAsString(),
-    // TODO: schema will be not required for versions after MCP
-    schema: find(`${ENTRY}/values.schema.json`, true).readAsJSON() as JSONSchema,
-    values: yaml.load(find(`${ENTRY}/values.yaml`, true).readAsString(), {
-      filename: 'values.yaml',
-      json: true,
-    }) as Record<string, any>,
+    readme: find(['README.md'], 'string'),
+    // TODO: schema won't be required for versions after MCP
+    schema: find(['values.schema.json'], 'json', true) as JSONSchema,
+    values: find(['values.yaml', 'values.yml'], 'yaml', true),
+    chart: await decodeWith(chartDecoder)(find(['Chart.yaml', 'Chart.yml'], 'yaml', true)),
   }
 }
 
@@ -51,13 +71,14 @@ const fetchUsefulChartFiles = () =>
     .then(findUsefulFilesInArchive)
 
 export const useRepoStore = defineStore('repo', () => {
-  const { data: usefulChartFiles, request: requestUsefulChartFiles } = useRequest<
+  const { data: usefulChartFiles, request: requestChartFiles } = useRequest<
     void,
     Error,
     UsefulChartFiles
   >(fetchUsefulChartFiles)
 
-  requestUsefulChartFiles()
+  const chartMeta = computed(() => usefulChartFiles.value.map(prop('chart')))
+  const readme = computed(() => usefulChartFiles.value.map(({ readme }) => readme))
 
-  return { usefulChartFiles }
+  return { usefulChartFiles, requestChartFiles, chartMeta, readme }
 })

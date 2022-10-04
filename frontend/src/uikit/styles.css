@@ -1,0 +1,13 @@
+@import "primeflex/primeflex.css";
+@import "primevue/resources/primevue.css";
+@import "primevue/resources/themes/lara-light-blue/theme.css"; /*variables are declared here*/
+@import "primeicons/primeicons.css";
+
+html, body, textarea {
+    font-size: 14px;
+    font-family: var(--font-family);
+}
+
+p, html, body, h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}

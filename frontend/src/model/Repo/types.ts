@@ -19,6 +19,13 @@ export type RepoManifest<E extends string> = {
   entries: { [entry in E]: EntryManifest[] }
 }
 
+export type ChartFile = {
+  name: string
+  version: string | number
+  kubeVersion?: string | number
+  description?: string
+}
+
 export type ValuesFile = Record<string, any>
 export type ReadmeFile = string
 export type SchemaFile = JSONSchema
@@ -28,4 +35,5 @@ export type UsefulChartFiles = {
   readme?: ReadmeFile
   // TODO: make this optional when we will support parsing values.yaml
   schema: SchemaFile
+  chart: ChartFile
 }

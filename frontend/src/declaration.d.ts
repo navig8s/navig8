@@ -29,3 +29,5 @@ declare module 'js-untar' {
 }
 
 type NonEmptyArray<T> = [T, ...T[]]
+
+type Nullable<T> = T | null

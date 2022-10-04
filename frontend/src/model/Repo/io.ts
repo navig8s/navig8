@@ -1,15 +1,6 @@
-import { JsonDecoder, ok, err } from 'ts.data.json'
-import { EntryManifest } from './types'
-import { tryCatch, always } from 'ramda'
-
-const arrayNotEmptyDecoder = <T extends unknown[], NE = NonEmptyArray<T[number]>>() =>
-  new JsonDecoder.Decoder<NE>(
-    tryCatch((json: any) => {
-      if (json.length > 0) return ok<NE>(json)
-
-      throw void 0
-    }, always(err<NE>('Array must be not empty'))),
-  )
+import { JsonDecoder } from 'ts.data.json'
+import { ChartFile, EntryManifest } from './types'
+import { arrayNotEmptyDecoder } from '@/decoder'
 
 export const chartManifestDecoder = JsonDecoder.object<EntryManifest>(
   {
@@ -36,3 +27,18 @@ export const repoManifestDecoder = <T extends string>(entry: T) =>
     },
     'repoManifest',
   )
+
+const versionDecoder = JsonDecoder.oneOf<string | number>(
+  [JsonDecoder.string, JsonDecoder.number],
+  'version',
+)
+
+export const chartDecoder = JsonDecoder.object<ChartFile>(
+  {
+    name: JsonDecoder.string,
+    version: versionDecoder,
+    kubeVersion: JsonDecoder.optional(versionDecoder),
+    description: JsonDecoder.optional(JsonDecoder.string),
+  },
+  'chart',
+)

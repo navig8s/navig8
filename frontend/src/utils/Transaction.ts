@@ -25,14 +25,14 @@ interface Rejected<E> {
   error: E
 }
 
-interface ResponseDataContract<E, T> {
+interface TransactionContract<E, T> {
   state: State
   data: T | null
   error: E | null
 }
-/* RemoteData is a data wrapper that unites transaction state, and it's response. Also gives an API to handle the state declaratively.
+/* Transaction is a data wrapper that unites transaction state, and it's response. Also gives an API to handle the state declaratively.
  *   Initial instance has a state 'Init':
- *    new RemoteData().isInit() => true
+ *    new Transaction().isInit() => true
  *
  *   To mark request as pending:
  *    remoteDataInstance = remoteDataInstance.pending()
@@ -49,25 +49,34 @@ interface ResponseDataContract<E, T> {
  *    remoteDataInstance.hasError() => true
  *
  *   To unwrap the data depending on its state we could use getOrElse, that will return data or default value in case request is not yet fulfilled:
- *    blueprintsRemoteDataInstance.getOrElse(() => []) => returns blueprints or an empty array in case request is not yet fulfilled
- *
+ *    transactionInstance.getOrElse(() => []) => returns data or an empty array in case state is not yet fulfilled
  *    .....
  *  */
-export class RemoteData<E, T> implements ResponseDataContract<E, T> {
+export class Transaction<E, T> implements TransactionContract<E, T> {
   constructor(
     public state: State = 'Init',
     public data: T | null = null,
     public error: E | null = null,
   ) {}
 
-  pending() {
-    return new RemoteData<E, T>('Pending', this.data, null)
+  static pending<E, T>(data?: T) {
+    return new Transaction<E, T>('Pending', data, null)
   }
-  fulfilled(data: T) {
-    return new RemoteData<E, T>('Fulfilled', data, null)
+  static fulfilled<E, T>(data: T) {
+    return new Transaction<E, T>('Fulfilled', data, null)
   }
-  rejected(error: E | null) {
-    return new RemoteData<E, T>('Rejected', null, error)
+  static rejected<E, T>(error: E) {
+    return new Transaction<E, T>('Rejected', null, error)
+  }
+
+  toPending() {
+    return new Transaction<E, T>('Pending', this.data, null)
+  }
+  toFulfilled(data: T) {
+    return new Transaction<E, T>('Fulfilled', data, null)
+  }
+  toRejected(error: E | null) {
+    return new Transaction<E, T>('Rejected', null, error)
   }
 
   fold<R>(onNone: () => R, onRejected: (error: E) => R, onSome: (data: T) => R) {
@@ -79,11 +88,11 @@ export class RemoteData<E, T> implements ResponseDataContract<E, T> {
   foldData<R>(onNone: () => R, onSome: (data: T) => R) {
     return this.data === null ? onNone() : onSome(this.data)
   }
-  getOrElse<T>(orElse: () => T) {
-    return this.hasData() ? this.data : orElse()
-  }
   foldError<R>(onNone: () => R, onSome: (error: E) => R) {
     return this.error === null ? onNone() : onSome(this.error)
+  }
+  getOrElse<T>(orElse: () => T) {
+    return this.hasData() ? this.data : orElse()
   }
 
   // TODO: Such type guards do not work correctly in the 'else' part of the if/else statement. Not worth it to solve now but in the future after migration to TS & Vue 3 this class should be reconsidered.
@@ -110,11 +119,24 @@ export class RemoteData<E, T> implements ResponseDataContract<E, T> {
     return this.isInit() || (this.isPending() && this.data === null)
   }
 
-  update(data: T): RemoteData<E, T>
-  update(mapper: (data: T | null) => T): RemoteData<E, T>
-  update(mapperOrData: any) {
-    return this.fulfilled(
-      typeof mapperOrData === 'function' ? mapperOrData(this.data) : mapperOrData,
-    )
+  map<N>(mapper: (data: T) => N): Transaction<E, N> {
+    if (this.hasData()) {
+      const newData = mapper(this.data)
+
+      return this.isFulfilled()
+        ? Transaction.fulfilled<E, N>(newData)
+        : Transaction.pending<E, N>(newData)
+    }
+
+    return new Transaction<E, N>(this.state, null, this.error)
+  }
+  mapError<N>(mapper: (data: E) => N) {
+    if (this.hasError()) return Transaction.rejected<N, T>(mapper(this.error))
+
+    return new Transaction<N, T>(this.state, this.data, null)
+  }
+
+  update(data: T) {
+    return this.toFulfilled(data)
   }
 }
