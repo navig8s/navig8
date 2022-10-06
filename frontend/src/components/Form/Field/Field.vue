@@ -37,6 +37,6 @@ onBeforeMount(() => (id.value = uuidV4()))
 
 <style scoped module>
 .field {
-  min-width: 30rem;
+  min-width: 34.92rem;
 }
 </style>

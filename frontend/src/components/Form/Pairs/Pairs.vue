@@ -9,11 +9,17 @@ const emit = defineEmits<{
   (e: 'input', value: Array<[string, string]>): void
 }>()
 
-const add = () => emit('input', [...props.pairs, ['', '']])
+const add = () => {
+  props.pairs.push(['', ''])
+  emit('input', props.pairs)
+}
 const remove = (index: number) => {
-  const copy = [...props.pairs]
-  copy.splice(index, 1)
-  emit('input', copy)
+  props.pairs.splice(index, 1)
+  emit('input', props.pairs)
+}
+const updatePair = (index: number, key: string, value: string) => {
+  props.pairs[index] = [key, value]
+  emit('input', props.pairs)
 }
 </script>
 
@@ -21,8 +27,16 @@ const remove = (index: number) => {
   <FieldSet>
     <Pair v-for="([key, value], index) in props.pairs" :key="index" @remove="remove(index)">
       <div class="flex gap-2">
-        <InputText :modelValue="key" placeholder="Key" />
-        <InputText :modelValue="value" placeholder="Value" />
+        <InputText
+          :modelValue="key"
+          placeholder="Key"
+          @update:modelValue="updatePair(index, $event, value)"
+        />
+        <InputText
+          :modelValue="value"
+          placeholder="Value"
+          @update:modelValue="updatePair(index, key, $event)"
+        />
       </div>
     </Pair>
     <div>

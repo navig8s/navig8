@@ -8,5 +8,5 @@ const checked = ref(props.field.defaultValue)
 </script>
 
 <template>
-  <Switcher :value="checked" @input="checked = $event" />
+  <Switcher :value="props.field.value" @input="props.field.value = $event" />
 </template>

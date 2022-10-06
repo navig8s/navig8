@@ -18,12 +18,12 @@ const props = defineProps<{ field: Field; id?: string }>()
 </script>
 
 <template>
-  <Text v-if="field.type === 'text'" :id="id" :field="props.field" />
-  <Number v-if="field.type === 'number'" :id="id" :field="props.field" />
-  <Switcher v-if="field.type === 'switcher'" :field="props.field" />
-  <List v-if="field.type === 'list'" :field="props.field" />
-  <Pairs v-if="field.type === 'pairs'" :field="props.field" />
-  <Select v-if="field.type === 'select'" :field="props.field" />
+  <Text v-if="props.field.type === 'text'" :id="id" :field="props.field" />
+  <Number v-if="props.field.type === 'number'" :id="id" :field="props.field" />
+  <Switcher v-if="props.field.type === 'switcher'" :field="props.field" />
+  <List v-if="props.field.type === 'list'" :field="props.field" />
+  <Pairs v-if="props.field.type === 'pairs'" :field="props.field" />
+  <Select v-if="props.field.type === 'select'" :field="props.field" />
 </template>
 
 <style scoped></style>

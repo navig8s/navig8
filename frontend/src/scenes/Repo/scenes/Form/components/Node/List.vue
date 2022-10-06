@@ -2,36 +2,30 @@
 import ListField from '@/components/Form/List'
 import FieldWrap from '@/components/Form/Field'
 import { List as IListField } from '@/store/form/model'
-import { computed, shallowRef } from 'vue'
+import { computed } from 'vue'
 import Node from './Node.vue'
 import NestedGroup from '@/components/Form/NestedGroup'
 
-type Value = Array<{ key: string; structure: IListField['structure'] }>
-
 const props = defineProps<{ field: IListField }>()
 
-const items = shallowRef<Value>([])
-
-const empty = computed(() => ({ structure: props.field.structure }))
 const nested = computed(() => Array.isArray(props.field.structure))
 </script>
 
 <template>
-  <!--  TODO: manage values-->
   <ListField
-    :items="items"
-    :empty="empty"
+    :items="props.field.value"
+    :empty="props.field.structure"
     :nested="nested"
-    v-slot="{ index, structure }"
-    @input="items = $event"
+    v-slot="{ item, index }"
+    @input="props.field.value = $event"
   >
-    <Node v-if="!nested" :field="structure" />
+    <Node v-if="!nested" :field="item" />
     <NestedGroup v-else>
       <FieldWrap
-        v-for="nestedField in structure"
-        :key="nestedField.key"
+        v-for="nestedField in item"
+        :key="nestedField.fullKey"
         :label="nestedField.title"
-        :path="props.field.key + '.[].' + nestedField.key"
+        :path="props.field.fullKey + '[' + index + '].' + nestedField.fullKey"
         :description="nestedField.description"
         v-slot="{ id }"
       >

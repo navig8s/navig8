@@ -116,7 +116,7 @@ export const schema = {
               default: '',
               title: 'Persistent Volume global Storageclass',
               description:
-                "If set to '-', storageClassName: '', which disables dynamic provisioning. If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner.  (gp2 on AWS, standard on GKE, AWS & OpenStack)",
+                "If set to '-', dynamic provisioning is disabled. If undefined (the default) or set to null, the default provisioner is used. (e.g gp2 on AWS, standard on GKE, AWS & OpenStack)",
             },
             accessMode: {
               type: 'string',
@@ -147,8 +147,9 @@ export const schema = {
               properties: {
                 size: {
                   type: 'string',
-                  default: 'global.persistence.size',
+                  default: '',
                   title: 'Catalog service Persistent Volume size',
+                  description: 'If not set, global.persistence.size is used.',
                 },
               },
             },
@@ -158,8 +159,9 @@ export const schema = {
               properties: {
                 size: {
                   type: 'string',
-                  default: 'global.persistence.size',
+                  default: '',
                   title: 'Jobs service Persistent Volume size',
+                  description: 'If not set, global.persistence.size is used.',
                 },
               },
             },
@@ -169,19 +171,20 @@ export const schema = {
               properties: {
                 size: {
                   type: 'string',
-                  default: 'global.persistence.size',
+                  default: '',
                   title: 'Logging service Persistent Volume size',
+                  description: 'If not set, global.persistence.size is used.',
                 },
               },
             },
             grafana: {
               type: 'object',
-              title: 'Logging service Persistent Volume details',
+              title: 'Grafana service Persistent Volume details',
               properties: {
                 size: {
                   type: 'string',
                   default: '5Gi',
-                  title: 'Logging service Persistent Volume size',
+                  title: 'Grafana service Persistent Volume size',
                   description: 'If not set, global.persistence.size is used.',
                 },
               },
@@ -634,7 +637,7 @@ export const schema = {
             },
             repository: {
               type: 'string',
-              default: 'kasten-image',
+              default: 'kasten-images',
               title: 'Prometheus image repository',
             },
           },
@@ -839,7 +842,7 @@ export const schema = {
               properties: {
                 create: {
                   type: 'boolean',
-                  default: false,
+                  default: true,
                   title: 'Create ServiceAccount for Alertmanager service',
                 },
               },
@@ -1293,7 +1296,7 @@ export const schema = {
             },
             groupnameClaim: {
               type: 'string',
-              default: 'group',
+              default: 'groups',
               title: 'Name of a custom OpenID Connect claim for specifying user groups',
             },
             groupnamePrefix: {
@@ -1414,13 +1417,13 @@ export const schema = {
                     properties: {
                       userAttr: {
                         type: 'string',
-                        default: '',
-                        title: 'User attribute',
+                        title:
+                          "Attribute in the user's entry that must match with the groupAttr while searching for groups",
                       },
                       groupAttr: {
                         type: 'string',
-                        default: '',
-                        title: 'Group attribute',
+                        title:
+                          "Attribute in the group's entry that must match with the userAttr while searching for groups",
                       },
                     },
                   },
@@ -1447,7 +1450,7 @@ export const schema = {
             },
             groupnameClaim: {
               type: 'string',
-              default: 'group',
+              default: 'groups',
               title: 'Name of a custom OpenID Connect claim for specifying user groups',
             },
             groupnamePrefix: {
@@ -1509,6 +1512,7 @@ export const schema = {
       },
     },
     apiservices: {
+      type: 'object',
       title: 'If APIService objects already exists',
       properties: {
         deployed: {

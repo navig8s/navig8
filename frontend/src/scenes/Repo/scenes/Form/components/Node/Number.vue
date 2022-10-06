@@ -5,9 +5,12 @@ import { Number as INumberField } from '@/store/form/model'
 const props = defineProps<{ field: INumberField }>()
 </script>
 
-<!--TODO: manage values-->
 <template>
-  <NumberUI :value="props.field.defaultValue" :isInteger="props.field.subSet === 'integer'" />
+  <NumberUI
+    :value="props.field.value"
+    :isInteger="props.field.subSet === 'integer'"
+    @input="props.field.value = $event"
+  />
 </template>
 
 <style scoped></style>

@@ -9,7 +9,7 @@ const items = shallowRef<Array<[string, string]>>([])
 </script>
 
 <template>
-  <PairsUI :pairs="items" @input="items = $event" />
+  <PairsUI :pairs="props.field.value" @input="props.field.value = $event" />
 </template>
 
 <style scoped></style>

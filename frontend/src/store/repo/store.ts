@@ -14,8 +14,8 @@ import { readAsJSON, readAsString } from '@/utils/arrayBuffer'
 import { computed } from 'vue'
 
 // TODO this values should become env variables
-const ENTRY = 'k10'
-const REPO = 'https://charts.kasten.io/'
+export const ENTRY = 'k10'
+export const REPO = 'https://charts.kasten.io/'
 
 const getRepoManifest = (url: string) =>
   corsProxyRequest(url.replace(/\/$/, '') + '/index.yaml')

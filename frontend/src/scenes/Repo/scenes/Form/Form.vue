@@ -1,19 +1,29 @@
 <script setup lang="ts">
 import Field from '@/components/Form/Field'
 import FieldSet from '@/components/Form/FieldSet'
-import { useValuesForm } from '@/store/form'
+import { useValuesFormStore } from '@/store/form'
 import Node from './components/Node'
+import { useDataStore } from './data'
+import { watch } from 'vue'
 
-const valuesFormStore = useValuesForm()
+const props = defineProps<{ active: boolean }>()
+
+const valuesFormStore = useValuesFormStore()
+const data = useDataStore()
+
+watch(
+  () => props.active,
+  (isActive) => (data.live = isActive),
+  { immediate: true },
+)
 </script>
-
 <template>
-  <FieldSet v-if="valuesFormStore.formStructure !== null">
+  <FieldSet v-if="valuesFormStore.form !== null">
     <Field
-      v-for="field in valuesFormStore.formStructure.fields"
-      :key="field.key"
+      v-for="field in valuesFormStore.form"
+      :key="field.fullKey"
       :label="field.title"
-      :path="field.key"
+      :path="field.fullKey"
       :description="field.description"
       v-slot="{ id }"
     >
