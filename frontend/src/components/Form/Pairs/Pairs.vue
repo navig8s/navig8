@@ -30,12 +30,12 @@ const updatePair = (index: number, key: string, value: string) => {
         <InputText
           :modelValue="key"
           placeholder="Key"
-          @update:modelValue="updatePair(index, $event, value)"
+          @update:modelValue="updatePair(index, $event || '', value)"
         />
         <InputText
           :modelValue="value"
           placeholder="Value"
-          @update:modelValue="updatePair(index, key, $event)"
+          @update:modelValue="updatePair(index, key, $event || '')"
         />
       </div>
     </Pair>
