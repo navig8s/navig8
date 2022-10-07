@@ -11,7 +11,7 @@ export const useScrollState = () => {
     () => {
       if (live.value) {
         window.addEventListener('scroll', onScroll)
-        setTimeout(() => window.scrollTo(scrollState.value), 0)
+        window.scrollTo(scrollState.value)
       } else {
         window.removeEventListener('scroll', onScroll)
       }

@@ -1,15 +1,26 @@
 <script lang="ts" setup>
 import { marked } from 'marked'
 import { useRepoStore } from '@/store/repo'
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { isNil } from 'ramda'
+import { useDataStore } from './data'
+
+const props = defineProps<{ active: boolean }>()
 
 const repoStore = useRepoStore()
+const dataStore = useDataStore()
+
 const html = computed(() =>
   repoStore.usefulChartFiles.foldData(
     () => '',
     ({ readme }) => (isNil(readme) ? '' : marked(readme)),
   ),
+)
+
+watch(
+  () => props.active,
+  (isActive) => (dataStore.live = isActive),
+  { immediate: true },
 )
 </script>
 
