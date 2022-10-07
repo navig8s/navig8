@@ -3,12 +3,17 @@ import { useOutputStore } from '@/store/output'
 import Button from 'primevue/button'
 import { PrimeIcons } from 'primevue/api'
 import { useDataStore } from './data'
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
+import { useRepoStore, REPO } from '@/store/repo'
+import { prop } from 'ramda'
 
 const props = defineProps<{ active: boolean }>()
 
+const repoStore = useRepoStore()
 const outputStore = useOutputStore()
 const dataStore = useDataStore()
+
+const info = computed(() => repoStore.usefulChartFiles.foldData(() => null, prop('chart')))
 
 const copy = () => navigator.clipboard.writeText(outputStore.commands)
 
@@ -20,7 +25,22 @@ watch(
 </script>
 
 <template>
-  <div class="px-4 py-3 w-full surface-ground border-round relative">
+  <p class="text-base mb-2">
+    The set of commands below will attempt to deploy {{ info.name }} from {{ REPO }}
+    with the parameters you specified in the Form panel.
+  </p>
+  <p class="text-base my-2">Notes:</p>
+  <ul class="text-base mb-2 mt-1 pl-5">
+    <li class="my-1">The commands below require helm (Version 3.x)</li>
+    <li class="my-1">
+      The commands below assume a working environment able to connect to your Kubernetes cluster
+    </li>
+    <li class="my-1">
+      The command is provided as is, it is up to the user to make sure the set of parameters
+      selected are a valid configuration
+    </li>
+  </ul>
+  <div class="mt-3 px-4 py-3 w-full surface-ground border-round relative">
     <Button
       :icon="PrimeIcons.COPY"
       :class="$style.copy"
