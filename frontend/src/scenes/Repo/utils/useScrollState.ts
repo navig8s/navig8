@@ -1,4 +1,4 @@
-import { ref, shallowRef, watch } from 'vue'
+import { nextTick, ref, shallowRef, watch } from 'vue'
 
 export const useScrollState = () => {
   const live = ref(false)
@@ -8,9 +8,10 @@ export const useScrollState = () => {
 
   watch(
     live,
-    () => {
+    async () => {
       if (live.value) {
         window.addEventListener('scroll', onScroll)
+        await nextTick()
         window.scrollTo(scrollState.value)
       } else {
         window.removeEventListener('scroll', onScroll)
