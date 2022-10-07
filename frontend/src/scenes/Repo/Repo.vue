@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import Form from './scenes/Form'
 import Output from './scenes/Output'
+import Readme from './scenes/Readme'
 import { useRepoStore } from '@/store/repo'
 import { computed, onMounted, ref } from 'vue'
 import Layout from '@/components/Layout'
 import Spinner from 'primevue/progressspinner'
-import { prop, isNil } from 'ramda'
+import { prop, isNil, propIs } from 'ramda'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
@@ -15,6 +16,9 @@ onMounted(repoStore.requestChartFiles)
 const tab = ref(0)
 
 const info = computed(() => repoStore.usefulChartFiles.foldData(() => null, prop('chart')))
+const hasReadme = computed(() =>
+  repoStore.usefulChartFiles.foldData(() => false, propIs(String, 'readme')),
+)
 </script>
 
 <template>
@@ -37,6 +41,9 @@ const info = computed(() => repoStore.usefulChartFiles.foldData(() => null, prop
           <TabPanel header="Output">
             <Output :active="tab === 1" />
           </TabPanel>
+          <TabPanel v-if="hasReadme" header="README.md">
+            <Readme :active="tab === 2" />
+          </TabPanel>
         </TabView>
       </div>
     </div>
@@ -45,12 +52,12 @@ const info = computed(() => repoStore.usefulChartFiles.foldData(() => null, prop
 
 <style scoped module>
 .content {
-  min-width: 900px;
+  width: 1100px;
 }
 .tabView {
   color: initial;
 }
-.tabView >>> :global(.p-tabview-nav-container) {
+.tabView :deep(:global(.p-tabview-nav-container)) {
   position: sticky;
   top: 0;
   z-index: 2;

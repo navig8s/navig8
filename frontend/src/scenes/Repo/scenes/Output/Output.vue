@@ -20,7 +20,7 @@ watch(
 </script>
 
 <template>
-  <div class="px-4 py-3 w-full surface-200 relative">
+  <div class="px-4 py-3 w-full surface-ground border-round relative">
     <Button
       :icon="PrimeIcons.COPY"
       :class="$style.copy"
@@ -34,7 +34,7 @@ watch(
       :class="$style.line"
       class="my-2 line-height-3"
     >
-      <span class="select-none">$</span>&nbsp;{{ line }}
+      <span class="select-none">$&nbsp;</span>{{ line }}
     </div>
   </div>
 </template>

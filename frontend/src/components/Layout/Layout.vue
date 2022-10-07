@@ -4,11 +4,11 @@ export default {}
 
 <template>
   <div :class="$style.layout" class="flex flex-column">
-    <header class="p-5 border-bottom-1 border-400"></header>
+    <header class="p-5 border-bottom-2 surface-border"></header>
     <main class="flex flex-column my-5 flex-grow-1">
       <slot />
     </main>
-    <footer class="p-5 border-top-1 border-400">Copyright</footer>
+    <footer class="p-5 border-top-2 surface-border">Copyright</footer>
   </div>
 </template>
 

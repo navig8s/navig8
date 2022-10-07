@@ -3,6 +3,10 @@
 @import "primevue/resources/themes/lara-light-blue/theme.css"; /*variables are declared here*/
 @import "primeicons/primeicons.css";
 
+html, body {
+    color: var(--text-color);
+}
+
 html, body, textarea {
     font-size: 14px;
     font-family: var(--font-family);

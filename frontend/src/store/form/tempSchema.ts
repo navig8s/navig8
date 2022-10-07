@@ -842,7 +842,7 @@ export const schema = {
               properties: {
                 create: {
                   type: 'boolean',
-                  default: true,
+                  default: false,
                   title: 'Create ServiceAccount for Alertmanager service',
                 },
               },
@@ -886,7 +886,7 @@ export const schema = {
               properties: {
                 create: {
                   type: 'boolean',
-                  default: false,
+                  default: true,
                   title: 'Create ServiceAccount for Prometheus server',
                 },
               },

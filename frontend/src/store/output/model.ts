@@ -108,7 +108,7 @@ export const generateCommands = (diff: Diff): string[] => {
       return acc + NEW_LINE + "--set-json '" + key + '=' + JSON.stringify(value) + "'"
     }
 
-    return acc + NEW_LINE + '--set ' + key + '=' + value
+    return acc + NEW_LINE + '--set "' + key + '=' + value + '"'
   }, '')
 
   return [addRepo, installPrefix + updates]
