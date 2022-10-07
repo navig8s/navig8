@@ -136,7 +136,6 @@ watch(
         padding: 0.5rem 0.75rem;
         font-size: 1.1rem;
         border-bottom: 1px solid var(--surface-border);
-        background-color: white;
       }
     }
     tbody {

@@ -5,6 +5,7 @@
 
 html, body {
     color: var(--text-color);
+    background-color: var(--surface-0)
 }
 
 html, body, textarea {
