@@ -144,13 +144,14 @@ watch(
         td {
           padding: 0.5rem 0.75rem;
           text-align: center;
+          vertical-align: top;
         }
       }
     }
 
-    thead tr td,
-    tbody tr:not(:last-child) td {
-      border-bottom: 1px solid var(--surface-border);
+    thead tr th,
+    tbody tr td {
+      border: 1px solid var(--surface-border);
     }
   }
   hr {
