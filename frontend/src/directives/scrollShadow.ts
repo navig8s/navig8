@@ -69,7 +69,7 @@ const topSpan = () =>
     top: '0',
     left: '0',
     right: '0',
-    height: '.6rem',
+    height: '.7rem',
     backgroundImage: 'linear-gradient(var(--gray-300), var(--surface-50))',
   })
 const bottomSpan = () =>
@@ -77,7 +77,7 @@ const bottomSpan = () =>
     bottom: '0',
     left: '0',
     right: '0',
-    height: '.6rem',
+    height: '.7rem',
     backgroundImage: 'linear-gradient(var(--surface-50), var(--gray-300))',
   })
 const leftSpan = () =>
@@ -85,7 +85,7 @@ const leftSpan = () =>
     top: '0',
     left: '0',
     bottom: '0',
-    width: '.6rem',
+    width: '.7rem',
     backgroundImage: 'linear-gradient(90deg, var(--gray-300), var(--surface-50))',
   })
 const rightSpan = () =>
@@ -93,7 +93,7 @@ const rightSpan = () =>
     top: '0',
     bottom: '0',
     right: '0',
-    width: '.6rem',
+    width: '.7rem',
     backgroundImage: 'linear-gradient(90deg, var(--surface-50), var(--gray-300))',
   })
 
