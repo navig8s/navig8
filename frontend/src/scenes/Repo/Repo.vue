@@ -36,13 +36,19 @@ const hasReadme = computed(() =>
         <p class="text-red-400">Version {{ info.version }}</p>
         <TabView v-model:activeIndex="tab" :class="$style.tabView" class="mt-4">
           <TabPanel header="Form">
-            <Form :active="tab === 0" v-scroll-shadow.horizontal />
+            <div :class="$style.tabPanelInner">
+              <Form :active="tab === 0" v-scroll-shadow.horizontal />
+            </div>
           </TabPanel>
           <TabPanel header="Output">
-            <Output :active="tab === 1" />
+            <div :class="$style.tabPanelInner">
+              <Output :active="tab === 1" />
+            </div>
           </TabPanel>
           <TabPanel v-if="hasReadme" header="README.md">
-            <Readme :active="tab === 2" />
+            <div :class="$style.tabPanelInner">
+              <Readme :active="tab === 2" />
+            </div>
           </TabPanel>
         </TabView>
       </div>
@@ -52,7 +58,7 @@ const hasReadme = computed(() =>
 
 <style scoped module>
 .content {
-  width: 1100px;
+  width: 1150px;
 }
 .tabView {
   color: initial;
@@ -65,5 +71,8 @@ const hasReadme = computed(() =>
 }
 .tabView :deep(:global(.p-tabview-panels)) {
   padding: 0;
+}
+.tabPanelInner {
+  padding: 1.25rem;
 }
 </style>
