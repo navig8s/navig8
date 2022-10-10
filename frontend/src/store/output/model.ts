@@ -105,7 +105,15 @@ export const generateCommands = (diff: Diff): string[] => {
     }
 
     if (typeof value === 'object') {
-      return acc + NEW_LINE + "--set-json '" + key + '=' + JSON.stringify(value) + "'"
+      return (
+        acc +
+        NEW_LINE +
+        "--set-json '" +
+        key +
+        '=' +
+        JSON.stringify(value).replace(/'/g, "\\'") +
+        "'"
+      )
     }
 
     return acc + NEW_LINE + '--set "' + key + '=' + value + '"'

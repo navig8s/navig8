@@ -9,8 +9,11 @@ import Spinner from 'primevue/progressspinner'
 import { prop, isNil, propIs } from 'ramda'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import { useValuesFormStore } from '@/store/form'
+import ErrorBoundary from './components/ErrorBoundary'
 
 const repoStore = useRepoStore()
+const formStore = useValuesFormStore()
 onMounted(repoStore.requestChartFiles)
 
 const tab = ref(0)
@@ -19,17 +22,21 @@ const info = computed(() => repoStore.usefulChartFiles.foldData(() => null, prop
 const hasReadme = computed(() =>
   repoStore.usefulChartFiles.foldData(() => false, propIs(String, 'readme')),
 )
+const showError = computed(
+  () => repoStore.usefulChartFiles.isRejected() || formStore.formStructure instanceof Error,
+)
 </script>
 
 <template>
-  <Layout>
-    <div
-      v-if="repoStore.usefulChartFiles.isPendingFirst()"
-      class="flex flex-grow-1 justify-center align-items-center"
-    >
-      <Spinner />
-    </div>
-    <div v-if="!isNil(info)" class="flex flex-column align-items-center">
+  <ErrorBoundary v-if="showError" />
+  <div
+    v-if="repoStore.usefulChartFiles.isPendingFirst()"
+    class="h-screen flex flex-grow-1 justify-center align-items-center"
+  >
+    <Spinner />
+  </div>
+  <Layout v-if="repoStore.usefulChartFiles.hasData()">
+    <div class="flex flex-column align-items-center">
       <div :class="$style.content">
         <h2 class="text-5xl mt-0 mb-2">{{ info?.name }}</h2>
         <p v-if="!isNil(info?.description)" class="mb-2 text-600">{{ info?.description }}</p>

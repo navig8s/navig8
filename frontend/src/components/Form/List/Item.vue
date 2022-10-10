@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Icon from '@/components/Icon'
-import { defineEmits } from 'vue'
 
 type Direction = 'up' | 'down'
 

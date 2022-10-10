@@ -3,12 +3,20 @@ import { useRequest } from '@/httpRequest/useRequest'
 import yaml from 'js-yaml'
 import untar, { FileResponse as ArchiveFile } from 'js-untar'
 import pako from 'pako'
-import { isNil, prop } from 'ramda'
+import { isNil, pipe, prop } from 'ramda'
 import { UsefulChartFiles, JSONSchema, chartDecoder } from '@/model/Repo'
 import { throwInline } from '@/utils/error'
-import { chartManifestDecoder, repoManifestDecoder } from '@/model/Repo'
+import { entryManifestDecoder, repoManifestDecoder } from '@/model/Repo'
 import { corsProxyRequest } from '@/httpRequest/corsProxyRequest'
-import { FileNotFoundError } from './error'
+import {
+  ChartManifestNotFoundError,
+  ChartManifestStructureInvalidError,
+  ChartManifestYamlInvalidError,
+  EntryManifestStructureInvalidError,
+  RepoManifestStructureInvalidError,
+  SchemaNotFoundError,
+  ValuesNotFoundError,
+} from './error'
 import { decodeWith } from '@/decoder'
 import { readAsJSON, readAsString } from '@/utils/arrayBuffer'
 import { computed } from 'vue'
@@ -21,9 +29,19 @@ const getRepoManifest = (url: string) =>
   corsProxyRequest(url.replace(/\/$/, '') + '/index.yaml')
     .then((response) => response.text())
     .then((raw) => yaml.load(raw, { filename: 'index.yaml', json: true }))
-    .then(decodeWith(repoManifestDecoder(ENTRY)))
+    .then(
+      decodeWith(
+        repoManifestDecoder(ENTRY),
+        (message, decoder) => new RepoManifestStructureInvalidError(message, decoder as any) as any,
+      ),
+    )
     .then((manifest) => manifest.entries[ENTRY][0])
-    .then(decodeWith(chartManifestDecoder))
+    .then(
+      decodeWith(
+        entryManifestDecoder,
+        (message, decoder) => new EntryManifestStructureInvalidError(message, decoder),
+      ),
+    )
 
 const findUsefulFilesInArchive = async (files: ArchiveFile[]): Promise<UsefulChartFiles> => {
   const find = <
@@ -34,19 +52,22 @@ const findUsefulFilesInArchive = async (files: ArchiveFile[]): Promise<UsefulCha
   >(
     variants: string[],
     readAs: A,
-    throwOnNotFound?: N,
+    notFoundErrorGetter?: () => Error,
   ): R => {
     const file = files.find((file) =>
       variants.some((name) => `${ENTRY}/${name}`.toLowerCase() === file.name.toLowerCase()),
     )
 
-    throwOnNotFound === true &&
-      file === undefined &&
-      throwInline(new FileNotFoundError(variants[0]))
+    isNil(file) && !isNil(notFoundErrorGetter) && throwInline(notFoundErrorGetter())
 
     if (!isNil(file) && readAs === 'string') return readAsString(file.buffer) as any
-    if (!isNil(file) && readAs === 'yaml')
-      return yaml.load(readAsString(file.buffer), { filename: variants[0], json: true }) as any
+    if (!isNil(file) && readAs === 'yaml') {
+      try {
+        return yaml.load(readAsString(file.buffer), { filename: variants[0], json: true }) as any
+      } catch (e) {
+        throw new ChartManifestYamlInvalidError()
+      }
+    }
     if (!isNil(file) && readAs === 'json') return readAsJSON(file.buffer)
 
     return undefined as any
@@ -55,9 +76,15 @@ const findUsefulFilesInArchive = async (files: ArchiveFile[]): Promise<UsefulCha
   return {
     readme: find(['README.md'], 'string'),
     // TODO: schema won't be required for versions after MCP
-    schema: find(['values.schema.json'], 'json', true) as JSONSchema,
-    values: find(['values.yaml', 'values.yml'], 'yaml', true),
-    chart: await decodeWith(chartDecoder)(find(['Chart.yaml', 'Chart.yml'], 'yaml', true)),
+    schema: find(['values.schema.json'], 'json', () => new SchemaNotFoundError()) as JSONSchema,
+    values: find(['values.yaml', 'values.yml'], 'yaml', () => new ValuesNotFoundError()),
+    chart: await pipe(
+      () => find(['Chart.yaml', 'Chart.yml'], 'yaml', () => new ChartManifestNotFoundError()),
+      decodeWith(
+        chartDecoder,
+        (message, decoder) => new ChartManifestStructureInvalidError(message, decoder),
+      ),
+    )(),
   }
 }
 

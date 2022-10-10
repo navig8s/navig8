@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Icon from '@/components/Icon'
-import { defineEmits } from 'vue'
 
 const emit = defineEmits<{
   (e: 'remove'): void

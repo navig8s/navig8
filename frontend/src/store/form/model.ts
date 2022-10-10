@@ -1,5 +1,6 @@
 import { JSONSchema, SchemaFile, ValuesFile } from '@/model/Repo'
 import { clone, isNil, path as getByPath } from 'ramda'
+import { FormConstructionError } from './error'
 
 export type PrimitiveValue = string | number | boolean
 export type ObjectValue = Record<string, PrimitiveValue | ArrayValue>
@@ -232,7 +233,7 @@ const generateFormFields = (
         .filter(Boolean) as Field[]
     }
     case 'array': {
-      // TODO: cover boolean and array cases
+      // TODO: cover boolean and array cases?
       if (isNil(root.items) || typeof root.items === 'boolean' || Array.isArray(root.items))
         return null
 
@@ -267,9 +268,8 @@ const generateFormFields = (
 
 export const formStructureFromSchema = (schema: SchemaFile, values: ValuesFile): Fields => {
   const fields = generateFormFields(schema, [], false, values)
-  // TODO: cover with errors
   if (isNil(fields) || !Array.isArray(fields)) {
-    throw new Error()
+    throw new FormConstructionError()
   }
 
   return fields

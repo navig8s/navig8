@@ -1,8 +1,8 @@
 import { JsonDecoder } from 'ts.data.json'
-import { ChartFile, EntryManifest } from './types'
+import { ChartManifest, EntryManifest } from './types'
 import { arrayNotEmptyDecoder } from '@/decoder'
 
-export const chartManifestDecoder = JsonDecoder.object<EntryManifest>(
+export const entryManifestDecoder = JsonDecoder.object<EntryManifest>(
   {
     apiVersion: JsonDecoder.string,
     created: JsonDecoder.string,
@@ -33,7 +33,7 @@ const versionDecoder = JsonDecoder.oneOf<string | number>(
   'version',
 )
 
-export const chartDecoder = JsonDecoder.object<ChartFile>(
+export const chartDecoder = JsonDecoder.object<ChartManifest>(
   {
     name: JsonDecoder.string,
     version: versionDecoder,

@@ -2,8 +2,7 @@ import { defineStore } from 'pinia'
 import { useRepoStore } from '@/store/repo'
 import { computed, ref, watch } from 'vue'
 import { Fields, formStructureFromSchema } from './model'
-import { schema } from './tempSchema'
-import { isEmpty, isNil } from 'ramda'
+import { isEmpty, isNil, tryCatch } from 'ramda'
 
 export const useValuesFormStore = defineStore('valuesForm', () => {
   const repoStore = useRepoStore()
@@ -11,17 +10,25 @@ export const useValuesFormStore = defineStore('valuesForm', () => {
     repoStore.usefulChartFiles.foldData(
       () => null,
       // @ts-ignore
-      ({ values }) => formStructureFromSchema(schema, values),
+      ({ values, schema }) =>
+        tryCatch(
+          () => formStructureFromSchema(schema, values),
+          (error) => error as Error,
+        )(),
     ),
   )
 
   const form = ref<Fields>([])
 
   watch(
-    formStructure,
-    (structure) => !isNil(structure) && isEmpty(form.value) && (form.value = structure),
+    () => formStructure.value,
+    (structure) =>
+      !isNil(structure) &&
+      !(structure instanceof Error) &&
+      isEmpty(form.value) &&
+      (form.value = structure),
     { immediate: true },
   )
 
-  return { form }
+  return { form, formStructure }
 })

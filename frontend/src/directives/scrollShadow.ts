@@ -36,8 +36,8 @@ const onChange = (element: HTMLElement, boundaries: Boundaries) => () => {
   )
   handleViewChange(
     boundaries.bottom,
-    () => element.scrollHeight - element.scrollTop > element.offsetHeight,
-    () => element.scrollHeight - element.scrollTop === element.offsetHeight,
+    () => Math.floor(element.scrollHeight - element.scrollTop) > Math.ceil(element.offsetHeight),
+    () => Math.floor(element.scrollHeight - element.scrollTop) <= Math.ceil(element.offsetHeight),
   )
   handleViewChange(
     boundaries.left,

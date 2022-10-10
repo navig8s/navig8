@@ -91,8 +91,11 @@ export class Transaction<E, T> implements TransactionContract<E, T> {
   foldError<R>(onNone: () => R, onSome: (error: E) => R) {
     return this.error === null ? onNone() : onSome(this.error)
   }
-  getOrElse<T>(orElse: () => T) {
+  getOrElse<D>(orElse: () => T | D) {
     return this.hasData() ? this.data : orElse()
+  }
+  getErrorOrElse<T>(orElse: () => E | T) {
+    return this.hasError() ? this.error : orElse()
   }
 
   // TODO: Such type guards do not work correctly in the 'else' part of the if/else statement. Not worth it to solve now but in the future after migration to TS & Vue 3 this class should be reconsidered.
@@ -100,7 +103,7 @@ export class Transaction<E, T> implements TransactionContract<E, T> {
     return this.data !== null
   }
   hasError(): this is { error: E } {
-    return this.data !== null
+    return this.error !== null
   }
 
   isInit(): this is Init {
