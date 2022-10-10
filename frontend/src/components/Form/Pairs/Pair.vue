@@ -8,22 +8,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div :class="$style.wrapper" class="flex gap-2 -mr-4 align-items-center">
+  <div class="flex gap-2 align-items-center">
     <slot />
-    <Icon
-      name="TIMES"
-      :class="$style.iconControls"
-      class="text-red-300 hover:text-red-500"
-      @click="emit('remove')"
-    />
+    <Icon name="TIMES" class="text-red-300 hover:text-red-500" @click="emit('remove')" />
   </div>
 </template>
 
-<style scoped module>
-.iconControls {
-  visibility: hidden;
-}
-.wrapper:hover .iconControls {
-  visibility: visible;
-}
-</style>
+<style scoped module></style>

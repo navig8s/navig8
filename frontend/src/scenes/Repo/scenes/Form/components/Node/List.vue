@@ -27,6 +27,7 @@ const nested = computed(() => Array.isArray(props.field.structure))
         :label="nestedField.title"
         :path="props.field.fullKey + '[' + index + '].' + nestedField.fullKey"
         :description="nestedField.description"
+        :vertical="true"
         v-slot="{ id }"
       >
         <Node :id="id" :field="nestedField" />

@@ -20,15 +20,10 @@ const changeOrder = (direction: Direction) => {
 
 <template>
   <div
-    :class="[
-      $style.wrapper,
-      'flex',
-      'gap-2',
-      '-mx-4',
-      { 'align-items-start': !centerControls, 'align-items-center': centerControls },
-    ]"
+    :class="{ 'align-items-start': !centerControls, 'align-items-center': centerControls }"
+    class="flex gap-2"
   >
-    <div :class="[$style.iconControls, 'flex', 'flex-column', { 'mt-1': !centerControls }]">
+    <div :class="{ 'mt-1': !centerControls }" class="flex flex-column">
       <Icon
         name="ANGLE_UP"
         :disabled="isFirst"
@@ -45,22 +40,11 @@ const changeOrder = (direction: Direction) => {
     <slot />
     <Icon
       name="TIMES"
-      :class="[
-        $style.iconControls,
-        'text-red-300',
-        'hover:text-red-500',
-        { 'mt-2': !centerControls },
-      ]"
+      class="text-red-300 hover:text-red-500"
+      :class="{ 'mt-2': !centerControls }"
       @click="emit('remove')"
     />
   </div>
 </template>
 
-<style scoped module>
-.iconControls {
-  visibility: hidden;
-}
-.wrapper:hover .iconControls {
-  visibility: visible;
-}
-</style>
+<style scoped module></style>

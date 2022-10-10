@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import { marked } from 'marked'
 import { useRepoStore } from '@/store/repo'
-import { computed, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
 import { isNil } from 'ramda'
 import { useDataStore } from './data'
+import { attachShadow } from '@/directives/scrollShadow'
 
 const props = defineProps<{ active: boolean }>()
 
 const repoStore = useRepoStore()
 const dataStore = useDataStore()
 
+const wrapper = ref<HTMLDivElement>()
+const unAttach = shallowRef<Array<() => void>>([])
 const html = computed(() =>
   repoStore.usefulChartFiles.foldData(
     () => '',
@@ -22,10 +25,26 @@ watch(
   (isActive) => (dataStore.live = isActive),
   { immediate: true },
 )
+
+watch(
+  html,
+  () =>
+    nextTick(() => {
+      if (!isNil(wrapper.value)) {
+        unAttach.value.forEach((effect) => effect())
+        unAttach.value = Array.from(wrapper.value.getElementsByTagName('table')).map(
+          (table) => attachShadow(table, true).unAttach,
+        )
+      }
+    }),
+  { immediate: true },
+)
+
+onBeforeUnmount(() => unAttach.value.forEach((effect) => effect()))
 </script>
 
 <template>
-  <div class="markdownContainer" v-html="html"></div>
+  <div ref="wrapper" class="markdownContainer" v-html="html"></div>
 </template>
 
 <style lang="scss">

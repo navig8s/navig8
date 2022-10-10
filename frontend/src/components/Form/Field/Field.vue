@@ -4,14 +4,26 @@ import { v4 as uuidV4 } from 'uuid'
 import { isNil } from 'ramda'
 
 const id = ref('')
-const props = defineProps<{ label: string; path: string; description?: string }>()
+const props = withDefaults(
+  defineProps<{ label: string; path: string; vertical?: boolean; description?: string }>(),
+  {
+    vertical: false,
+  },
+)
 
 onBeforeMount(() => (id.value = uuidV4()))
 </script>
 
 <template>
-  <div :class="$style.field" class="flex flex-column w-min">
-    <div class="flex mb-2 mt-3 border-gray-600">
+  <div
+    :class="[$style.field, `gap-${vertical ? 2 : 3}`, { 'flex-column': vertical }]"
+    class="flex mt-3"
+  >
+    <div
+      :class="{ 'justify-content-end flex-shrink-0 text-right': !vertical }"
+      class="flex border-gray-600"
+      style="max-width: 500px; width: calc(50% - 0.5rem)"
+    >
       <label :for="id">
         <span class="text-base font-bold inline-block">
           {{ props.label }}
@@ -29,7 +41,10 @@ onBeforeMount(() => (id.value = uuidV4()))
         </span>
       </label>
     </div>
-    <div>
+    <div
+      :class="{ 'flex flex-column flex-shrink-0 justify-content-end': !vertical }"
+      style="width: calc(50% - 0.5rem)"
+    >
       <slot :id="id" />
     </div>
   </div>

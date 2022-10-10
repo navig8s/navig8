@@ -36,7 +36,7 @@ const hasReadme = computed(() =>
         <p class="text-red-400">Version {{ info.version }}</p>
         <TabView v-model:activeIndex="tab" :class="$style.tabView" class="mt-4">
           <TabPanel header="Form">
-            <Form :active="tab === 0" />
+            <Form :active="tab === 0" v-scroll-shadow.horizontal />
           </TabPanel>
           <TabPanel header="Output">
             <Output :active="tab === 1" />
@@ -62,5 +62,8 @@ const hasReadme = computed(() =>
   top: 0;
   z-index: 2;
   background: var(--surface-card);
+}
+.tabView :deep(:global(.p-tabview-panels)) {
+  padding: 0;
 }
 </style>

@@ -2,7 +2,7 @@
 import FieldSet from '../FieldSet'
 import Item from './Item.vue'
 import Button from 'primevue/button'
-import { clone } from 'ramda'
+import { clone, isEmpty } from 'ramda'
 
 const props = withDefaults(defineProps<{ items: any[]; empty: any; nested?: boolean }>(), {
   nested: false,
@@ -41,7 +41,7 @@ const changeOrder = (direction: 'up' | 'down', index: number) => {
       <slot :item="item" :index="index" />
     </Item>
     <div>
-      <Button type="button" @click="add">
+      <Button :class="{ 'ml-4': !isEmpty(props.items) }" type="button" @click="add">
         {{ props.items.length === 0 ? 'Create item' : 'Add item' }}
       </Button>
     </div>
