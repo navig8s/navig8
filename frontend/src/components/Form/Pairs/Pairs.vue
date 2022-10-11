@@ -41,7 +41,7 @@ const updatePair = (index: number, key: string, value: string) => {
     </Pair>
     <div>
       <Button type="button" @click="add">
-        {{ props.pairs.length === 0 ? 'Create item' : 'Add item' }}
+        {{ props.pairs.length === 0 ? 'Create key/value pair' : 'Add item' }}
       </Button>
     </div>
   </FieldSet>

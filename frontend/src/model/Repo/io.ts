@@ -13,6 +13,7 @@ export const entryManifestDecoder = JsonDecoder.object<EntryManifest>(
       JsonDecoder.array(JsonDecoder.string, 'urls'),
       arrayNotEmptyDecoder<string[]>(),
     ),
+    icon: JsonDecoder.optional(JsonDecoder.string),
     version: JsonDecoder.string,
   },
   'entry',

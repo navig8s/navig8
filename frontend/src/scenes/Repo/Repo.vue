@@ -35,10 +35,13 @@ const showError = computed(
   >
     <Spinner />
   </div>
-  <Layout v-if="repoStore.usefulChartFiles.hasData()">
+  <Layout
+    v-if="repoStore.usefulChartFiles.hasData() && !isNil(info)"
+    :logo="repoStore?.entryManifest?.icon"
+  >
     <div class="flex flex-column align-items-center">
       <div :class="$style.content">
-        <h2 class="text-5xl mt-0 mb-2">{{ info?.name }}</h2>
+        <h2 class="text-5xl mt-0 mb-2">{{ info.name }}</h2>
         <p v-if="!isNil(info?.description)" class="mb-2 text-600">{{ info?.description }}</p>
         <p class="text-red-400">Version {{ info.version }}</p>
         <TabView v-model:activeIndex="tab" :class="$style.tabView" class="mt-4">

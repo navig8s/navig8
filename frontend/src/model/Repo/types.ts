@@ -12,6 +12,7 @@ export type EntryManifest = {
   name: string
   urls: string[]
   version: string
+  icon?: string
 }
 
 export type RepoManifest<E extends string> = {

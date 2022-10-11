@@ -1,5 +1,5 @@
 <script lang="ts" setup="">
-import { REPO, useRepoStore } from '@/store/repo'
+import { useRepoStore } from '@/store/repo'
 import { useValuesFormStore } from '@/store/form'
 import { computed, ComputedRef } from 'vue'
 import {
@@ -11,6 +11,7 @@ import {
 import { DecodeError } from '@/decoder'
 import { FormConstructionError } from '@/store/form/error'
 import { CORSOrDroppedConnectionError, RequestError } from '@/httpRequest/RequestError'
+import { REPO_URL } from '@/environment'
 
 const repoStore = useRepoStore()
 const formStore = useValuesFormStore()
@@ -24,7 +25,7 @@ const error: ComputedRef<{ title: string; description: string }> = computed(() =
     if (errorInstance.code === 404) {
       return {
         title: 'Helm repo was not found',
-        description: `Probably "${REPO}" is not a valid path`,
+        description: `Probably "${REPO_URL}" is not a valid path`,
       }
     }
   }
@@ -51,7 +52,7 @@ const error: ComputedRef<{ title: string; description: string }> = computed(() =
       return {
         title,
         description: descriptionGetter(
-          `Helm repository manifest '${REPO.replace(/\/$/, '')}/index.yaml'`,
+          `Helm repository manifest '${REPO_URL.replace(/\/$/, '')}/index.yaml'`,
         ),
       }
     }

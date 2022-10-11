@@ -1,6 +1,6 @@
 import { ArrayValue, Field, Fields, ObjectValue, Value, Values } from '@/store/form/model'
 import { isEmpty, isNil, path as getByPath, pipe } from 'ramda'
-import { ENTRY, REPO } from '@/store/repo'
+import { REPO_ENTRY, REPO_URL } from '@/environment'
 
 type Diff = Array<[string, Value]>
 
@@ -100,8 +100,8 @@ export const extractDiffFromForm = (form: Fields, defaults: Values) => {
 }
 
 export const generateCommands = (diff: Diff): string[] => {
-  const addRepo = `helm add repo kasten ${REPO}`
-  const installPrefix = `helm install kasten/${ENTRY} --name=${ENTRY}`
+  const addRepo = `helm add repo kasten ${REPO_URL}`
+  const installPrefix = `helm install kasten/${REPO_ENTRY} --name=${REPO_ENTRY}`
   const NEW_LINE = ' \\\n'
 
   const updates = diff.reduce((acc, [key, value]) => {

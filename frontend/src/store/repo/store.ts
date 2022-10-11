@@ -4,7 +4,7 @@ import yaml from 'js-yaml'
 import untar, { FileResponse as ArchiveFile } from 'js-untar'
 import pako from 'pako'
 import { isNil, pipe, prop } from 'ramda'
-import { UsefulChartFiles, JSONSchema, chartDecoder } from '@/model/Repo'
+import { UsefulChartFiles, JSONSchema, chartDecoder, EntryManifest } from '@/model/Repo'
 import { throwInline } from '@/utils/error'
 import { entryManifestDecoder, repoManifestDecoder } from '@/model/Repo'
 import { corsProxyRequest } from '@/httpRequest/corsProxyRequest'
@@ -19,11 +19,8 @@ import {
 } from './error'
 import { decodeWith } from '@/decoder'
 import { readAsJSON, readAsString } from '@/utils/arrayBuffer'
-import { computed } from 'vue'
-
-// TODO this values should become env variables
-export const ENTRY = 'k10'
-export const REPO = 'https://charts.kasten.io/'
+import { computed, ref } from 'vue'
+import { REPO_ENTRY, REPO_URL } from '@/environment'
 
 const getRepoManifest = (url: string) =>
   corsProxyRequest(url.replace(/\/$/, '') + '/index.yaml')
@@ -31,11 +28,11 @@ const getRepoManifest = (url: string) =>
     .then((raw) => yaml.load(raw, { filename: 'index.yaml', json: true }))
     .then(
       decodeWith(
-        repoManifestDecoder(ENTRY),
+        repoManifestDecoder(REPO_ENTRY),
         (message, decoder) => new RepoManifestStructureInvalidError(message, decoder as any) as any,
       ),
     )
-    .then((manifest) => manifest.entries[ENTRY][0])
+    .then((manifest) => manifest.entries[REPO_ENTRY][0])
     .then(
       decodeWith(
         entryManifestDecoder,
@@ -55,7 +52,10 @@ const findUsefulFilesInArchive = async (files: ArchiveFile[]): Promise<UsefulCha
     notFoundErrorGetter?: () => Error,
   ): R => {
     const file = files.find((file) =>
-      variants.some((name) => `${ENTRY}/${name}`.toLowerCase() === file.name.toLowerCase()),
+      variants.some(
+        (name) =>
+          `${import.meta.env.NAVIG8_REPO_ENTRY}/${name}`.toLowerCase() === file.name.toLowerCase(),
+      ),
     )
 
     isNil(file) && !isNil(notFoundErrorGetter) && throwInline(notFoundErrorGetter())
@@ -88,16 +88,22 @@ const findUsefulFilesInArchive = async (files: ArchiveFile[]): Promise<UsefulCha
   }
 }
 
-const fetchUsefulChartFiles = () =>
-  getRepoManifest(REPO)
-    .then((entryManifest) => corsProxyRequest(entryManifest.urls[0]))
-    .then((res) => res.arrayBuffer())
-    .then(pako.inflate) // Decompress gzip using pako
-    .then(prop('buffer')) // Get ArrayBuffer from the Uint8Array pako returns
-    .then(untar)
-    .then(findUsefulFilesInArchive)
-
 export const useRepoStore = defineStore('repo', () => {
+  const entryManifest = ref<EntryManifest>()
+
+  const fetchUsefulChartFiles = () =>
+    getRepoManifest(REPO_URL)
+      .then((entryManifestResult) => {
+        entryManifest.value = entryManifestResult
+
+        return corsProxyRequest(entryManifestResult.urls[0])
+      })
+      .then((res) => res.arrayBuffer())
+      .then(pako.inflate) // Decompress gzip using pako
+      .then(prop('buffer')) // Get ArrayBuffer from the Uint8Array pako returns
+      .then(untar)
+      .then(findUsefulFilesInArchive)
+
   const { data: usefulChartFiles, request: requestChartFiles } = useRequest<
     void,
     Error,
@@ -107,5 +113,5 @@ export const useRepoStore = defineStore('repo', () => {
   const chartMeta = computed(() => usefulChartFiles.value.map(prop('chart')))
   const readme = computed(() => usefulChartFiles.value.map(({ readme }) => readme))
 
-  return { usefulChartFiles, requestChartFiles, chartMeta, readme }
+  return { usefulChartFiles, requestChartFiles, chartMeta, readme, entryManifest }
 })

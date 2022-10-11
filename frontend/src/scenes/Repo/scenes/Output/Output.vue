@@ -4,7 +4,8 @@ import Button from 'primevue/button'
 import { PrimeIcons } from 'primevue/api'
 import { useDataStore } from './data'
 import { computed, watch } from 'vue'
-import { useRepoStore, REPO } from '@/store/repo'
+import { useRepoStore } from '@/store/repo'
+import { REPO_URL } from '@/environment'
 
 const props = defineProps<{ active: boolean }>()
 
@@ -25,7 +26,8 @@ watch(
 
 <template>
   <p class="text-base mb-2">
-    The set of commands below will attempt to deploy {{ info.name }} from {{ REPO }}
+    The set of commands below will attempt to deploy {{ info?.name }} from
+    {{ REPO_URL }}
     with the parameters you specified in the Form panel.
   </p>
   <p class="text-base my-2">Notes:</p>
