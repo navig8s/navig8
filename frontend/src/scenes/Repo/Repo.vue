@@ -44,6 +44,7 @@ const showError = computed(
         <TabView v-model:activeIndex="tab" :class="$style.tabView" class="mt-4">
           <TabPanel header="Form">
             <div :class="$style.tabPanelInner">
+              <!-- TODO: This approach causes performance issues-->
               <Form :active="tab === 0" v-scroll-shadow.horizontal />
             </div>
           </TabPanel>

@@ -101,8 +101,9 @@ export const attachShadow = (element: HTMLElement, horizontal = false, vertical 
   const boundaries: Boundaries = {}
   const changeHandler = onChange(element, boundaries)
 
+  const realParent = element.parentElement!
   const container = document.createElement('div')
-  element.parentElement!.appendChild(container)
+  realParent.appendChild(container)
   container.appendChild(element)
 
   if (horizontal || !vertical) {
@@ -125,7 +126,7 @@ export const attachShadow = (element: HTMLElement, horizontal = false, vertical 
   const unAttach = () => {
     element.removeEventListener('scroll', changeHandler)
     resizeObserver.disconnect()
-    for (const boundary of Object.values(boundaries)) element.removeChild(boundary)
+    realParent.replaceChild(element, container)
   }
 
   ;(element as HTMLElementWithAState)[stateKey] = { unAttach }
@@ -138,10 +139,8 @@ export const attachShadow = (element: HTMLElement, horizontal = false, vertical 
 }
 
 export const scrollShadow: Directive = {
-  mounted(el, { modifiers }) {
-    const { unAttach } = attachShadow(el, modifiers.horizontal, modifiers.vertical)
-
-    el[stateKey] = { unAttach }
+  beforeMount(el, { modifiers }) {
+    attachShadow(el, modifiers.horizontal, modifiers.vertical)
   },
   beforeUnmount(el) {
     ;(el as HTMLElementWithAState)[stateKey]?.unAttach()
