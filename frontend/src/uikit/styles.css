@@ -1,6 +1,7 @@
 @import "primeflex/primeflex.css";
 @import "primevue/resources/primevue.css";
 @import "./light.css"; /*variables are declared here*/
+@import "@/../light.css";
 @import "primeicons/primeicons.css";
 
 html, body {
