@@ -1,5 +1,5 @@
 import { JSONSchema, SchemaFile, ValuesFile } from '@/model/Repo'
-import { clone, isNil, path as getByPath, tryCatch } from 'ramda'
+import { clone, isEmpty, isNil, path as getByPath, tryCatch } from 'ramda'
 import { FormConstructionError } from './error'
 
 export type PrimitiveValue = string | number | boolean
@@ -234,10 +234,18 @@ const generateFormFields = (
     }
     case 'array': {
       // TODO: cover boolean and array cases?
-      if (isNil(root.items) || typeof root.items === 'boolean' || Array.isArray(root.items))
+      if (
+        isNil(root.items) ||
+        typeof root.items === 'boolean' ||
+        (Array.isArray(root.items) && isEmpty(root.items))
+      )
         return null
 
-      const structure = generateFormFields(root.items, [], isSelfRequired)
+      const template = Array.isArray(root.items) ? root.items[0] : root.items
+
+      if (typeof template === 'boolean') return null
+
+      const structure = generateFormFields(template, [], isSelfRequired)
       if (isNil(structure)) return null
 
       const populateWithValue = (
@@ -272,7 +280,6 @@ const generateFormFields = (
         return { ...copy, value, defaultValue: clone(value) } as Field
       }
 
-      // TODO: map value with structure
       const defaultValue = getDefault<Value[]>(
         Array.isArray(root.default),
         root.default,
