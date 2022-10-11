@@ -1,5 +1,5 @@
 import { JSONSchema, SchemaFile, ValuesFile } from '@/model/Repo'
-import { clone, isNil, path as getByPath } from 'ramda'
+import { clone, isNil, path as getByPath, tryCatch } from 'ramda'
 import { FormConstructionError } from './error'
 
 export type PrimitiveValue = string | number | boolean
@@ -59,8 +59,8 @@ export type List = {
   title: string
   description?: string
   structure: NestedFields
-  defaultValue: ArrayValue
-  value: Fields
+  defaultValue: NestedFields[]
+  value: NestedFields[]
   path: string[]
   fullKey: string
   key: string
@@ -237,16 +237,53 @@ const generateFormFields = (
       if (isNil(root.items) || typeof root.items === 'boolean' || Array.isArray(root.items))
         return null
 
-      const structure = generateFormFields(root.items, [], false)
+      const structure = generateFormFields(root.items, [], isSelfRequired)
       if (isNil(structure)) return null
 
+      const populateWithValue = (
+        node: Value | Value[],
+        structure: Field | Fields,
+      ): Field | Fields => {
+        if (Array.isArray(structure)) {
+          return structure.flatMap((field) => populateWithValue(node, field))
+        }
+
+        const copy = clone(structure)
+
+        const value = ((): Field['value'] => {
+          const fromPath = getByPath(structure.path, node)
+
+          switch (structure.type) {
+            case 'switcher':
+            case 'select':
+            case 'number':
+            case 'text':
+              return fromPath as string | number | boolean
+            case 'list':
+              return (fromPath as Value[]).map((item) =>
+                populateWithValue(item, structure.structure),
+              ) as NestedFields[]
+            case 'pairs': {
+              return Object.entries(fromPath as Record<string, string>)
+            }
+          }
+        })()
+
+        return { ...copy, value, defaultValue: clone(value) } as Field
+      }
+
       // TODO: map value with structure
-      const defaultValue = getDefault(
+      const defaultValue = getDefault<Value[]>(
         Array.isArray(root.default),
         root.default,
         [],
         getByPath(path, values),
       )
+      const structuredDefaultValue = tryCatch(
+        () =>
+          defaultValue.map((value: any) => populateWithValue(value, structure)) as NestedFields[],
+        () => [],
+      )()
 
       return {
         type: 'list' as const,
@@ -254,8 +291,8 @@ const generateFormFields = (
         title: getTitle(fullKey, root.title),
         description: root.description,
         structure,
-        defaultValue: clone(defaultValue),
-        value: clone(defaultValue),
+        defaultValue: clone(structuredDefaultValue),
+        value: clone(structuredDefaultValue),
         fullKey,
         key: path[path.length - 1] ?? '',
         path,

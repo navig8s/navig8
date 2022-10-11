@@ -5,7 +5,6 @@ import { PrimeIcons } from 'primevue/api'
 import { useDataStore } from './data'
 import { computed, watch } from 'vue'
 import { useRepoStore, REPO } from '@/store/repo'
-import { prop } from 'ramda'
 
 const props = defineProps<{ active: boolean }>()
 
@@ -13,7 +12,7 @@ const repoStore = useRepoStore()
 const outputStore = useOutputStore()
 const dataStore = useDataStore()
 
-const info = computed(() => repoStore.usefulChartFiles.foldData(() => null, prop('chart')))
+const info = computed(() => repoStore.chartMeta.getOrElse(() => null))
 
 const copy = () => navigator.clipboard.writeText(outputStore.commands)
 

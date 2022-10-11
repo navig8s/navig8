@@ -28,7 +28,9 @@ const extractValue = (field: Field): Value => {
         return acc
       }, {})
     case 'list':
-      return field.value.map(extractValue) as ArrayValue
+      return field.value.map((item) =>
+        Array.isArray(item) ? item.map(extractValue) : extractValue(item),
+      ) as ArrayValue
   }
 }
 
@@ -74,14 +76,17 @@ export const extractDiffFromForm = (form: Fields, defaults: Values) => {
         }
 
         field.value.forEach((subField, index) => {
-          if (Array.isArray(subField) && isNil(defaultValue[index])) {
-            diff.push([
-              keyFromPath([...path, index]),
-              subField.reduce((acc, objectItem) => {
-                acc[objectItem.key] = extractValue(objectItem)
-                return acc
-              }, {}),
-            ])
+          if (Array.isArray(subField)) {
+            if (isNil(defaultValue[index])) {
+              diff.push([
+                keyFromPath([...path, index]),
+                subField.reduce((acc, objectItem) => {
+                  // @ts-ignore
+                  acc[objectItem.key] = extractValue(objectItem)
+                  return acc
+                }, {}),
+              ])
+            }
           } else {
             walk(subField, [...path, index], diff)
           }
@@ -100,23 +105,22 @@ export const generateCommands = (diff: Diff): string[] => {
   const NEW_LINE = ' \\\n'
 
   const updates = diff.reduce((acc, [key, value]) => {
-    if (typeof value === 'string') {
-      return acc + NEW_LINE + '--set-string "' + key + '=' + value.replace(/"/g, '\\$&') + '"'
+    switch (typeof value) {
+      case 'string':
+        return acc + NEW_LINE + '--set-string "' + key + '=' + value.replace(/"/g, '\\$&') + '"'
+      case 'object':
+        return (
+          acc +
+          NEW_LINE +
+          "--set-json '" +
+          key +
+          '=' +
+          JSON.stringify(value).replace(/'/g, "\\'") +
+          "'"
+        )
+      default:
+        return acc + NEW_LINE + '--set "' + key + '=' + value + '"'
     }
-
-    if (typeof value === 'object') {
-      return (
-        acc +
-        NEW_LINE +
-        "--set-json '" +
-        key +
-        '=' +
-        JSON.stringify(value).replace(/'/g, "\\'") +
-        "'"
-      )
-    }
-
-    return acc + NEW_LINE + '--set "' + key + '=' + value + '"'
   }, '')
 
   return [addRepo, installPrefix + updates]

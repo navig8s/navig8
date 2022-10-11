@@ -6,7 +6,7 @@ import { useRepoStore } from '@/store/repo'
 import { computed, onMounted, ref } from 'vue'
 import Layout from '@/components/Layout'
 import Spinner from 'primevue/progressspinner'
-import { prop, isNil, propIs } from 'ramda'
+import { isNil, propIs } from 'ramda'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { useValuesFormStore } from '@/store/form'
@@ -18,7 +18,7 @@ onMounted(repoStore.requestChartFiles)
 
 const tab = ref(0)
 
-const info = computed(() => repoStore.usefulChartFiles.foldData(() => null, prop('chart')))
+const info = computed(() => repoStore.chartMeta.getOrElse(() => null))
 const hasReadme = computed(() =>
   repoStore.usefulChartFiles.foldData(() => false, propIs(String, 'readme')),
 )

@@ -10,7 +10,7 @@ import {
 } from '@/store/repo/error'
 import { DecodeError } from '@/decoder'
 import { FormConstructionError } from '@/store/form/error'
-import { CORSOrDroppedConnectionError } from '@/httpRequest/RequestError'
+import { CORSOrDroppedConnectionError, RequestError } from '@/httpRequest/RequestError'
 
 const repoStore = useRepoStore()
 const formStore = useValuesFormStore()
@@ -19,6 +19,15 @@ const error: ComputedRef<{ title: string; description: string }> = computed(() =
   const errorInstance = repoStore.usefulChartFiles.getErrorOrElse(() =>
     formStore.formStructure instanceof Error ? formStore.formStructure : new Error(),
   )
+
+  if (errorInstance instanceof RequestError) {
+    if (errorInstance.code === 404) {
+      return {
+        title: 'Helm repo was not found',
+        description: `Probably "${REPO}" is not a valid path`,
+      }
+    }
+  }
 
   if (errorInstance instanceof CORSOrDroppedConnectionError) {
     return { title: errorInstance.message, description: 'Open browser console to see more details' }
