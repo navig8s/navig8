@@ -139,7 +139,7 @@ export const attachShadow = (element: HTMLElement, horizontal = false, vertical 
 }
 
 export const scrollShadow: Directive = {
-  beforeMount(el, { modifiers }) {
+  mounted(el, { modifiers }) {
     attachShadow(el, modifiers.horizontal, modifiers.vertical)
   },
   beforeUnmount(el) {
