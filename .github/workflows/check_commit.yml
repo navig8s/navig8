@@ -8,9 +8,11 @@ jobs:
   preset:
     runs-on: ubuntu-latest
     environment: production
+    defaults:
+      run:
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v3
-      - run: cd frontend
       - uses: pnpm/action-setup@v2
         with:
           version: ^7
