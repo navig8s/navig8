@@ -5,7 +5,7 @@ on:
   - pull_request
 
 jobs:
-  preset-node:
+  preset:
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -59,7 +59,6 @@ jobs:
     env:
       NODE_ENV: production
     steps:
-      - uses: ${{ preset_workflow }}
       - run: |
           pushd frontend
           pnpm build
