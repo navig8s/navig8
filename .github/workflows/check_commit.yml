@@ -5,9 +5,8 @@ on:
   - pull_request
 
 jobs:
-  preset:
+  check:
     runs-on: ubuntu-latest
-    environment: production
     defaults:
       run:
         working-directory: frontend
@@ -23,29 +22,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
-
-  test:
-    runs-on: ubuntu-latest
-    needs: preset
-    steps:
       - run: pnpm test
-
-  type_check:
-    runs-on: ubuntu-latest
-    needs: preset
-    steps:
       - run: pnpm type:check
-
-  lint:
-    runs-on: ubuntu-latest
-    needs: preset
-    steps:
       - run: pnpm lint
-
-  build:
-    runs-on: ubuntu-latest
-    needs: preset
-    env:
-      NODE_ENV: production
-    steps:
-      - run: pnpm build
+      - run: |
