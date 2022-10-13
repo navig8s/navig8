@@ -5,10 +5,26 @@ on:
   - pull_request
 
 jobs:
-  preset:
+  preset-node:
     runs-on: ubuntu-latest
+    environment: production
     steps:
-      - uses: ./.github/actions/preset.yml
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ^7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          check-latest: true
+          cache: pnpm
+      - run: |
+          pushd backend
+          pnpm install --frozen-lockfile
+          popd
+          pushd frontend
+          pnpm install --frozen-lockfile
+          popd
 
   test:
     runs-on: ubuntu-latest
