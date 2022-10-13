@@ -1,0 +1,27 @@
+name: Check the PR
+
+on:
+  - pull_request
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ^7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          check-latest: true
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test -- --passWithNoTests
+      - run: pnpm type:check
+      - run: pnpm lint
+      - run: pnpm build

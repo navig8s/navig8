@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vite build",
     "preview": "vite preview",
+    "type:check": "vue-tsc --noEmit",
     "lint": "pnpm $(pnpm bin)/eslint src/**/*.{vue,ts}",
     "test": "NODE_OPTIONS=--experimental-vm-modules pnpm $(pnpm bin)/jest"
   },
