@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - run: cd frontend
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
         with:
@@ -18,40 +19,25 @@ jobs:
           node-version: 16
           check-latest: true
           cache: pnpm
-      - run: |
-          pushd backend
-          pnpm install --frozen-lockfile
-          popd
-          pushd frontend
-          pnpm install --frozen-lockfile
-          popd
+      - run: pnpm install --frozen-lockfile
 
   test:
     runs-on: ubuntu-latest
     needs: preset
     steps:
-      - run: |
-          pushd frontend
-          pnpm test
-          popd
+      - run: pnpm test
 
   type_check:
     runs-on: ubuntu-latest
     needs: preset
     steps:
-      - run: |
-          pushd frontend
-          pnpm type:check
-          popd
+      - run: pnpm type:check
 
   lint:
     runs-on: ubuntu-latest
     needs: preset
     steps:
-      - run: |
-          pushd frontend
-          pnpm lint
-          popd
+      - run: pnpm lint
 
   build:
     runs-on: ubuntu-latest
@@ -59,7 +45,4 @@ jobs:
     env:
       NODE_ENV: production
     steps:
-      - run: |
-          pushd frontend
-          pnpm build
-          popd
+      - run: pnpm build
