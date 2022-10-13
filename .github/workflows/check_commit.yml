@@ -4,14 +4,11 @@ on:
   - push
   - pull_request
 
-env:
-  preset_workflow: ${{ github.repository }}/.github/workflows/preset.yaml
-
 jobs:
   preset:
     runs-on: ubuntu-latest
     steps:
-      - uses: ${{ preset_workflow }}
+      - uses: ./.github/actions/preset.yml
 
   test:
     runs-on: ubuntu-latest
@@ -26,7 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: preset
     steps:
-      - uses: ${{ preset_workflow }}
       - run: |
           pushd frontend
           pnpm type:check
@@ -36,7 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: preset
     steps:
-      - uses: ${{ preset_workflow }}
       - run: |
           pushd frontend
           pnpm lint
