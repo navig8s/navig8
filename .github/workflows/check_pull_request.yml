@@ -1,4 +1,4 @@
-name: Check the commit
+name: Check the PR
 
 on:
   - pull_request
