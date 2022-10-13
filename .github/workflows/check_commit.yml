@@ -21,6 +21,7 @@ jobs:
           node-version: 16
           check-latest: true
           cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
 
   test:
