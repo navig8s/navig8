@@ -4,6 +4,7 @@ on: pull_request
 
 jobs:
   check:
+    name: Check the PR Job
     runs-on: ubuntu-latest
     defaults:
       run:
