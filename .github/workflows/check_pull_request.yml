@@ -25,4 +25,3 @@ jobs:
       - run: pnpm type:check
       - run: pnpm lint
       - run: pnpm build
-      - run: exit 1
