@@ -2,9 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" href="<%= favicon %>" />
     <meta name="viewport" content="width=1400, initial-scale=1" />
-    <title>Vite + Vue + TS</title>
+    <% for (const entry of metas) { %>
+      <meta name="<%= entry.name %>" content="<%= entry.content %>" />
+    <% } %>
+
+    <% for (const entry of links) { %>
+      <link
+        <% for (const [key, value] of Object.entries(entry)) { %>
+          <%= key %>="<%= value %>"
+        <% } %>
+      />
+    <% } %>
+    <title><%= title %></title>
   </head>
   <body>
     <div id="app"></div>

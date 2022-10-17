@@ -104,7 +104,9 @@ const generateFormFields = (
   required: boolean,
   values?: ValuesFile,
 ): Nullable<Field | Field[]> => {
-  if (isNil(root.type) || Array.isArray(root.type)) return null
+  if (isNil(root.type) || (Array.isArray(root.type) && isEmpty(root.type))) return null
+
+  const type = Array.isArray(root.type) ? root.type[0] : root.type
 
   const requiredSet = new Set(Array.isArray(root.required) ? root.required : [])
   const isSelfRequired = root.required === true || required
@@ -112,18 +114,16 @@ const generateFormFields = (
   const fullKey = path.join('.')
 
   if (
-    ['string', 'number', 'integer'].includes(root.type) &&
+    ['string', 'number', 'integer'].includes(type) &&
     Array.isArray(root.enum) &&
     root.enum.length > 1 &&
     isPrimitiveArray(root.enum)
   ) {
     const options = [...root.enum]
-    const defaultValue = getDefault(
-      typeof root.default === 'string',
-      root.default,
-      '',
-      getByPath(path, values),
-    )
+    const defaultValue =
+      type === 'string'
+        ? getDefault(typeof root.default === 'string', root.default, '', getByPath(path, values))
+        : getDefault(typeof root.default === 'number', root.default, 0, getByPath(path, values))
 
     if (!options.includes(defaultValue)) options.unshift(defaultValue)
 
@@ -141,7 +141,7 @@ const generateFormFields = (
     }
   }
 
-  switch (root.type) {
+  switch (type) {
     case 'string': {
       const defaultValue = getDefault(
         typeof root.default === 'string',
@@ -173,7 +173,7 @@ const generateFormFields = (
 
       return {
         type: 'number' as const,
-        subSet: root.type === 'integer' ? 'integer' : 'number',
+        subSet: type === 'integer' ? 'integer' : 'number',
         required: isSelfRequired,
         title: getTitle(fullKey, root.title),
         description: root.description,
@@ -266,13 +266,13 @@ const generateFormFields = (
             case 'select':
             case 'number':
             case 'text':
-              return fromPath as string | number | boolean
+              return (fromPath ?? structure.defaultValue) as string | number | boolean
             case 'list':
               return (fromPath as Value[]).map((item) =>
                 populateWithValue(item, structure.structure),
               ) as NestedFields[]
             case 'pairs': {
-              return Object.entries(fromPath as Record<string, string>)
+              return Object.entries((fromPath ?? {}) as Record<string, string>)
             }
           }
         })()

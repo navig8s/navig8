@@ -1,6 +1,6 @@
 import { ArrayValue, Field, Fields, ObjectValue, Value, Values } from '@/store/form/model'
 import { isEmpty, isNil, path as getByPath, pipe } from 'ramda'
-import { REPO_ENTRY, REPO_URL } from '@/environment'
+import { PREDEFINED_NAMESPACE, REPO_ENTRY, REPO_URL } from '@/environment'
 
 type Diff = Array<[string, Value]>
 
@@ -104,6 +104,10 @@ export const generateCommands = (diff: Diff): string[] => {
   const installPrefix = `helm install kasten/${REPO_ENTRY} --name=${REPO_ENTRY}`
   const NEW_LINE = ' \\\n'
 
+  const createNamespace = isNil(PREDEFINED_NAMESPACE)
+    ? ''
+    : NEW_LINE + '--namespace ' + PREDEFINED_NAMESPACE + NEW_LINE + '--create-namespace'
+
   const updates = diff.reduce((acc, [key, value]) => {
     switch (typeof value) {
       case 'string':
@@ -123,5 +127,5 @@ export const generateCommands = (diff: Diff): string[] => {
     }
   }, '')
 
-  return [addRepo, installPrefix + updates]
+  return [addRepo, installPrefix + createNamespace + updates]
 }

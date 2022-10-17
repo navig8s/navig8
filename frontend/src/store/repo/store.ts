@@ -26,30 +26,21 @@ const getRepoManifest = (url: string) =>
   corsProxyRequest(url.replace(/\/$/, '') + '/index.yaml')
     .then((response) => response.text())
     .then((raw) => yaml.load(raw, { filename: 'index.yaml', json: true }))
-    .then(
-      decodeWith(
-        repoManifestDecoder(REPO_ENTRY),
-        (message, decoder) => new RepoManifestStructureInvalidError(message, decoder as any) as any,
-      ),
-    )
+    .then(decodeWith(repoManifestDecoder(REPO_ENTRY), RepoManifestStructureInvalidError as any))
     .then((manifest) => manifest.entries[REPO_ENTRY][0])
-    .then(
-      decodeWith(
-        entryManifestDecoder,
-        (message, decoder) => new EntryManifestStructureInvalidError(message, decoder),
-      ),
-    )
+    .then(decodeWith(entryManifestDecoder, EntryManifestStructureInvalidError))
 
 const findUsefulFilesInArchive = async (files: ArchiveFile[]): Promise<UsefulChartFiles> => {
   const find = <
     A extends 'json' | 'string' | 'yaml',
     RT extends A extends 'string' ? string : Record<string, any>,
     R extends N extends true ? RT : RT | undefined,
+    ErrorConstructor extends new () => Error,
     N extends boolean = false,
   >(
     variants: string[],
     readAs: A,
-    notFoundErrorGetter?: () => Error,
+    ErrorConstructor?: ErrorConstructor,
   ): R => {
     const file = files.find((file) =>
       variants.some(
@@ -58,7 +49,7 @@ const findUsefulFilesInArchive = async (files: ArchiveFile[]): Promise<UsefulCha
       ),
     )
 
-    isNil(file) && !isNil(notFoundErrorGetter) && throwInline(notFoundErrorGetter())
+    isNil(file) && !isNil(ErrorConstructor) && throwInline(new ErrorConstructor())
 
     if (!isNil(file) && readAs === 'string') return readAsString(file.buffer) as any
     if (!isNil(file) && readAs === 'yaml') {
@@ -76,14 +67,11 @@ const findUsefulFilesInArchive = async (files: ArchiveFile[]): Promise<UsefulCha
   return {
     readme: find(['README.md'], 'string'),
     // TODO: schema won't be required for versions after MCP
-    schema: find(['values.schema.json'], 'json', () => new SchemaNotFoundError()) as JSONSchema,
-    values: find(['values.yaml', 'values.yml'], 'yaml', () => new ValuesNotFoundError()),
+    schema: find(['values.schema.json'], 'json', SchemaNotFoundError) as JSONSchema,
+    values: find(['values.yaml', 'values.yml'], 'yaml', ValuesNotFoundError),
     chart: await pipe(
-      () => find(['Chart.yaml', 'Chart.yml'], 'yaml', () => new ChartManifestNotFoundError()),
-      decodeWith(
-        chartDecoder,
-        (message, decoder) => new ChartManifestStructureInvalidError(message, decoder),
-      ),
+      () => find(['Chart.yaml', 'Chart.yml'], 'yaml', ChartManifestNotFoundError),
+      decodeWith(chartDecoder, ChartManifestStructureInvalidError),
     )(),
   }
 }
