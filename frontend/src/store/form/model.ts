@@ -298,7 +298,7 @@ const generateFormFields = (
         .filter(Boolean) as Field[]
     }
     case 'array': {
-      // TODO: cover boolean and array cases?
+      // TODO: Do we need to cover boolean and array cases of `root.items`?
       if (
         isNil(root.items) ||
         typeof root.items === 'boolean' ||
@@ -316,7 +316,7 @@ const generateFormFields = (
       const populateWithValue = (
         node: Value | Value[],
         structure: Field | Fields,
-      ): Field | Fields => {
+      ): NestedFields => {
         if (Array.isArray(structure)) {
           return structure.flatMap((field) => populateWithValue(node, field))
         }
@@ -352,8 +352,7 @@ const generateFormFields = (
         getByPath(path, values),
       )
       const structuredDefaultValue = tryCatch(
-        () =>
-          defaultValue.map((value: any) => populateWithValue(value, structure)) as NestedFields[],
+        () => defaultValue.map((value: any) => populateWithValue(value, structure)),
         () => [],
       )()
 
