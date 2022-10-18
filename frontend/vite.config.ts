@@ -16,8 +16,8 @@ export default defineConfig({
     ViteEjsPlugin((config) => ({
       title: config.env.NAVIG8_SEO_TITLE,
       favicon: config.env.NAVIG8_FAVICON,
-      metas: JSON.parse(config.env.NAVIG8_METAS),
-      links: JSON.parse(config.env.NAVIG8_LINKS),
+      metas: JSON.parse(config.env.NAVIG8_METAS ?? []),
+      links: JSON.parse(config.env.NAVIG8_LINKS ?? []),
     })),
   ],
   envPrefix: 'NAVIG8_',
