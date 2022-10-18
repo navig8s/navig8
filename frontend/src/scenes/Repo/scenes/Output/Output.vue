@@ -32,7 +32,7 @@ watch(
   </p>
   <p class="text-base my-2">Notes:</p>
   <ul class="text-base mb-2 mt-1 pl-5">
-    <li class="my-1">The commands below require helm (Version 3.x)</li>
+    <li class="my-1">The commands below require helm (Version >=3.10)</li>
     <li class="my-1">
       The commands below assume a working environment able to connect to your Kubernetes cluster
     </li>
