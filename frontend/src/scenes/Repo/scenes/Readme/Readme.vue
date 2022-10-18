@@ -32,9 +32,10 @@ watch(
     nextTick(() => {
       if (!isNil(wrapper.value)) {
         unAttach.value.forEach((effect) => effect())
-        unAttach.value = Array.from(wrapper.value.getElementsByTagName('table')).map(
-          (table) => attachShadow(table, true).unAttach,
-        )
+        unAttach.value = [
+          ...Array.from(wrapper.value.getElementsByTagName('table')),
+          ...(Array.from(wrapper.value?.querySelectorAll('pre code')) as HTMLElement[]),
+        ].map((table) => attachShadow(table, true).unAttach)
       }
     }),
   { immediate: true },
@@ -120,6 +121,7 @@ onBeforeUnmount(() => unAttach.value.forEach((effect) => effect()))
     background-color: var(--surface-ground);
     width: 100%;
     display: block;
+    overflow-x: auto;
   }
   blockquote {
     border-left: 3px solid var(--surface-border);
@@ -150,6 +152,7 @@ onBeforeUnmount(() => unAttach.value.forEach((effect) => effect()))
     width: max-content;
     max-width: 100%;
     display: block;
+    margin: 1.5rem 0;
     thead {
       tr th {
         padding: 0.5rem 0.75rem;
