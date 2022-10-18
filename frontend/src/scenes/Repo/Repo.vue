@@ -41,8 +41,14 @@ const showError = computed(
   >
     <div class="flex flex-column align-items-center">
       <div :class="$style.content">
-        <h2 class="text-5xl mt-0 mb-2">{{ info.name }}</h2>
-        <p v-if="!isNil(info?.description)" class="mb-2 text-600">{{ info?.description }}</p>
+        <h2 class="text-5xl mt-0 mb-2 capitalize">{{ info.name }}</h2>
+        <p
+          v-if="!isNil(info?.description)"
+          class="mb-2 text-600 line-height-2"
+          style="max-width: 70%"
+        >
+          {{ info?.description }}
+        </p>
         <p class="text-red-400">Version {{ info.version }}</p>
         <TabView v-model:activeIndex="tab" :class="$style.tabView" class="mt-4">
           <TabPanel header="Form">
