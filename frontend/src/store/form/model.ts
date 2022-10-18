@@ -78,6 +78,120 @@ export type Pairs = {
   readonly type: 'pairs'
 }
 
+export const Select = (
+  required: boolean,
+  path: string[],
+  defaultValue: number | string,
+  options: Array<number | string>,
+  title?: string,
+  description?: string,
+): Select => ({
+  type: 'select' as const,
+  required,
+  path,
+  defaultValue,
+  value: defaultValue,
+  options,
+  title: title ?? path.join('.'),
+  fullKey: path.join('.'),
+  key: path[path.length - 1] ?? '',
+  description,
+})
+
+export const Text = (
+  required: boolean,
+  path: string[],
+  defaultValue: string,
+  title?: string,
+  description?: string,
+): Text => ({
+  type: 'text' as const,
+  required,
+  path,
+  defaultValue,
+  value: defaultValue,
+  title: title ?? path.join('.'),
+  fullKey: path.join('.'),
+  key: path[path.length - 1] ?? '',
+  description,
+})
+
+export const Number = (
+  required: boolean,
+  path: string[],
+  defaultValue: number,
+  isInteger: boolean,
+  title?: string,
+  description?: string,
+): Number => ({
+  type: 'number' as const,
+  required,
+  path,
+  defaultValue,
+  value: defaultValue,
+  title: title ?? path.join('.'),
+  fullKey: path.join('.'),
+  key: path[path.length - 1] ?? '',
+  subSet: isInteger ? 'integer' : 'number',
+  description,
+})
+
+export const Switcher = (
+  required: boolean,
+  path: string[],
+  defaultValue: boolean,
+  title?: string,
+  description?: string,
+): Switcher => ({
+  type: 'switcher' as const,
+  required,
+  path,
+  defaultValue,
+  value: defaultValue,
+  title: title ?? path.join('.'),
+  fullKey: path.join('.'),
+  key: path[path.length - 1] ?? '',
+  description,
+})
+
+export const Pairs = (
+  required: boolean,
+  path: string[],
+  defaultValue: Array<[string, string]>,
+  title?: string,
+  description?: string,
+): Pairs => ({
+  type: 'pairs' as const,
+  required,
+  path,
+  defaultValue: clone(defaultValue),
+  value: clone(defaultValue),
+  title: title ?? path.join('.'),
+  fullKey: path.join('.'),
+  key: path[path.length - 1] ?? '',
+  description,
+})
+
+export const List = (
+  required: boolean,
+  path: string[],
+  structure: NestedFields,
+  defaultValue: NestedFields[],
+  title?: string,
+  description?: string,
+): List => ({
+  type: 'list' as const,
+  required,
+  path,
+  structure,
+  defaultValue: clone(defaultValue),
+  value: clone(defaultValue),
+  title: title ?? path.join('.'),
+  fullKey: path.join('.'),
+  key: path[path.length - 1] ?? '',
+  description,
+})
+
 export type Field = Text | Number | Switcher | List | Pairs | Select
 
 export type Fields = Field[]
@@ -88,8 +202,6 @@ const isPrimitiveArray = (array: any[]): array is Array<string | number> =>
     (option) =>
       typeof option !== 'object' && typeof option !== 'function' && typeof option !== 'symbol',
   )
-
-const getTitle = (fromKey: string, fromSchema?: string) => fromSchema ?? fromKey
 
 const getDefault = <V>(isCorrectType: boolean, defaultValue: any, fallback: V, fromValues?: V) => {
   if (isCorrectType) return defaultValue
@@ -111,8 +223,6 @@ const generateFormFields = (
   const requiredSet = new Set(Array.isArray(root.required) ? root.required : [])
   const isSelfRequired = root.required === true || required
 
-  const fullKey = path.join('.')
-
   if (
     ['string', 'number', 'integer'].includes(type) &&
     Array.isArray(root.enum) &&
@@ -127,18 +237,7 @@ const generateFormFields = (
 
     if (!options.includes(defaultValue)) options.unshift(defaultValue)
 
-    return {
-      type: 'select' as const,
-      options,
-      required: isSelfRequired,
-      title: getTitle(fullKey, root.title),
-      description: root.description,
-      defaultValue,
-      value: defaultValue,
-      fullKey,
-      key: path[path.length - 1] ?? '',
-      path,
-    }
+    return Select(isSelfRequired, path, defaultValue, options, root.title, root.description)
   }
 
   switch (type) {
@@ -150,17 +249,7 @@ const generateFormFields = (
         getByPath(path, values),
       )
 
-      return {
-        type: 'text' as const,
-        required: isSelfRequired,
-        title: getTitle(fullKey, root.title),
-        description: root.description,
-        defaultValue,
-        value: defaultValue,
-        fullKey,
-        key: path[path.length - 1] ?? '',
-        path,
-      }
+      return Text(isSelfRequired, path, defaultValue, root.title, root.description)
     }
     case 'integer':
     case 'number': {
@@ -171,18 +260,14 @@ const generateFormFields = (
         getByPath(path, values),
       )
 
-      return {
-        type: 'number' as const,
-        subSet: type === 'integer' ? 'integer' : 'number',
-        required: isSelfRequired,
-        title: getTitle(fullKey, root.title),
-        description: root.description,
-        defaultValue,
-        value: defaultValue,
-        fullKey,
-        key: path[path.length - 1] ?? '',
+      return Number(
+        isSelfRequired,
         path,
-      }
+        defaultValue,
+        type === 'integer',
+        root.title,
+        root.description,
+      )
     }
     case 'boolean': {
       const defaultValue = getDefault(
@@ -192,17 +277,7 @@ const generateFormFields = (
         getByPath(path, values),
       )
 
-      return {
-        type: 'switcher' as const,
-        required: isSelfRequired,
-        title: getTitle(fullKey, root.title),
-        description: root.description,
-        defaultValue,
-        value: defaultValue,
-        fullKey,
-        key: path[path.length - 1] ?? '',
-        path,
-      }
+      return Switcher(isSelfRequired, path, defaultValue, root.title, root.description)
     }
     case 'object': {
       if (isNil(root.properties)) {
@@ -213,17 +288,7 @@ const generateFormFields = (
           Object.entries(getByPath(path, values) ?? {}),
         )
 
-        return {
-          type: 'pairs',
-          required: isSelfRequired,
-          title: getTitle(fullKey, root.title),
-          description: root.description,
-          defaultValue: clone(defaultValue),
-          value: clone(defaultValue),
-          fullKey,
-          key: path[path.length - 1] ?? '',
-          path,
-        }
+        return Pairs(isSelfRequired, path, defaultValue, root.title, root.description)
       }
 
       return Object.entries(root.properties)
@@ -292,18 +357,14 @@ const generateFormFields = (
         () => [],
       )()
 
-      return {
-        type: 'list' as const,
-        required: isSelfRequired,
-        title: getTitle(fullKey, root.title),
-        description: root.description,
-        structure,
-        defaultValue: clone(structuredDefaultValue),
-        value: clone(structuredDefaultValue),
-        fullKey,
-        key: path[path.length - 1] ?? '',
+      return List(
+        isSelfRequired,
         path,
-      }
+        structure,
+        structuredDefaultValue,
+        root.title,
+        root.description,
+      )
     }
   }
 
