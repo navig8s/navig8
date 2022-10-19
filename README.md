@@ -1,9 +1,11 @@
-# Navig8s.dev
-## Simplify and Visualize your Helm Deployments
+# Navig8s
+## Simplify and Visualize your users' Helm Deployments
 
 [Logo *forthcoming from marketing*]
 
 The Navig8 web user interface simpifies Kubernetes application deployment by guiding users through [Helm Chart values](https://helm.sh/docs/chart_best_practices/values/).
+
+---
 
 ## Table of contents
 * [Assumptions](#assumptions)
@@ -168,16 +170,14 @@ For example you host navig8 at `https://navig8-instance.com`. This should be inc
 
 ## Examples
 
-- TODO: [install.kasten.io](https://install.kasten.io) is a public Navig8 instance for the K10 Helm Chart.
+- [Coming soon]: [install.kasten.io](https://install.kasten.io) is a public Navig8 instance for the K10 Helm Chart.
 
 ## Roadmap
 
-- Launch Navig8 at KubeCon NA 2022 with open source license
-- Take a look at GitHub issues.
-
-- Move to good first issue, etc.:
-    - Provision community facilities and guidance
-        - e.g.: Code of Conduct, GitHub Issues, Discussions?
-    - User Interface/eXperience:
-    - Back-end:
-    - Suggest Helm.sh upstream project improvements:
+- [ ] Prebuilt Docker image with CORS proxy inside
+- [ ] Possibility to skip `values.schema.json` file for the form construction
+- [ ] Possibility to view and edit `values.yaml` file
+- [ ] Dark theme support
+- [ ] Code of Conduct
+- [ ] Issues template
+    
