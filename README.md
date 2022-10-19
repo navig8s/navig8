@@ -18,6 +18,7 @@ The Navig8 web user interface simpifies Kubernetes application deployment by gui
   + [Build time environment variables for the FE:](#build-time-environment-variables-for-the-fe)
   + [Custom logo](#custom-logo)
   + [Themization](#themization)
+* [Deployment](#deployment)
 * [Examples](#examples)
 * [Roadmap](#roadmap)
 
@@ -86,7 +87,15 @@ The interface is built using [PrimeVue UI-kit](https://www.primefaces.org/primev
 
 It's possible to make color scheme more brand specific by setting it css variable in `frontend/light.css` file that is dedicated to CSS overwrites for the light theme (We assume that we will support dark theme as well in the nearest future).
 
-[There is](https://www.primefaces.org/primevue/colors) a description color palettes that this UI-kit uses.
+[There is](https://www.primefaces.org/primevue/colors) a description of color palettes that this UI-kit uses.
+
+## Deployment
+Currently it's assumed that the process of deployment will be:
+1. Build frontend static with specified ENV variables and changed `light.css` file.
+2. Deployment to the server that serves static html/js/css
+3. CORS header `Access-Control-Allow-Origin` should be extended for the specified helm chart repo files with domain where navig8 is run.
+
+We have plans on simplifying this process. Please see the [Roadmap](#roadmap) section for more details
 
 ## Examples
 
