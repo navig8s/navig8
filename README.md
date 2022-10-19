@@ -80,7 +80,28 @@ cd frontend && pnpm dev
 ### Custom logo
 By default an `icon` from the manifest of specified helm repo is used as logo in the header of the interface.
 
-It can be overwritten with css rule `background-image` inside `.logo` class in the `frontend/light.css` that is responsible for light theme (We assume that we will support dark theme as well in the nearest future) 
+It can be overwritten with css rule `background-image` inside `.logo` class in the `frontend/light.css` that is responsible for light theme (We assume that we will support dark theme as well in the nearest future)
+The logo can be of any format supported by the browser (but `.svg` is highly recommended)
+
+This is how it could be done using only terminal:
+```shell
+LOGO_URL=url
+cat >> frontend/light.css <<- EOF
+.logo {
+   background-image: url($LOGO_URL);
+}
+EOF
+```
+
+You can also add a file there and set relative path:
+```shell
+cp /some/where/else/logo.svg frontend/logo.svg
+cat >> frontend/light.css <<- EOF
+.logo {
+   background-image: url(./logo.svg);
+}
+EOF
+```
 
 ### Themization
 The interface is built using [PrimeVue UI-kit](https://www.primefaces.org/primevue/) that makes it possible to customize theme. 
@@ -89,13 +110,59 @@ It's possible to make color scheme more brand specific by setting it css variabl
 
 [There is](https://www.primefaces.org/primevue/colors) a description of color palettes that this UI-kit uses.
 
+The method of adding new scheme to the `light.css` file can be the same as for [custom logo](#custom-logo)
+```shell
+cat >> frontend/light.css <<- EOF
+:root {
+  --primary-color:#3B82F6;
+  --primary-color-text:#ffffff;
+  /* other colors */
+}
+EOF
+```
+
+### CSS rules overwrite
+
+Feel free to fork this repo and change styles yourself, but if fork is not preferable option - 
+the overwrite can be done in the same way as for [custom logo](#custom-logo) and [themization](#themization)
+
 ## Deployment
 Currently it's assumed that the process of deployment will be:
-1. Build frontend static with specified ENV variables and changed `light.css` file.
+1. Build frontend static using [Available Customization options](#customization-options).
 2. Deployment to the server that serves static html/js/css
 3. CORS header `Access-Control-Allow-Origin` should be extended for the specified helm chart repo files with domain where navig8 is run.
 
 We have plans on simplifying this process. Please see the [Roadmap](#roadmap) section for more details
+
+### An example of deployment flow
+
+It is assumed that we are inside the process where pnpm, git and node are available
+
+1. Clone the repo
+```shell
+git clone git@github.com:navig8s/navig8.git
+```
+
+2. Install dependencies (If your environment doesn't support `Makefile` see [flow of installation without Makefile](#without-makefile-from-scratch))
+```shell
+make install 
+```
+3. Setup at least required ENV variables declared in [this table](#build-time-environment-variables-for-the-fe).
+You can do it inside the terminal process of course.
+```shell
+NAVIG8_REPO_URL=repo_url
+NAVIG8_REPO_ENTRY=entry
+NAVIG8_REPO_NAME=name
+```
+4. Build the frontend
+```shell
+cd frontend
+pnpm build 
+cd ..
+```
+5. Copy the output of FE static inside `frontend/dist` folder anywhere you want.
+6. Set `Access-Control-Allow-Origin` for the helm repo you've specified so navig8 could fetch all files it needs.
+For example you host navig8 at `https://navig8-instance.com`. This should be included in the `Access-Control-Allow-Origin` header for all files in the specified helm chart.
 
 ## Examples
 
