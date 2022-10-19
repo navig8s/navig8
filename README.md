@@ -28,10 +28,11 @@ The Navig8 web user interface simpifies Kubernetes application deployment by gui
 
 ## Assumptions
 - Navig8's initial design is lightweight: all functionality is in the web client for easy web hosting.
-    - There is no persistence for values or back-end requirements, see the [Roadmap](#roadmap) section for more on this topic.
-- The target Helm Chart repository is network accessible to the web client running Navig8.
-    - OPTIONAL: the target Helm Chart has [values.schema.json](https://helm.sh/docs/topics/charts/#schema-files) and a `README.md`.
-    - Navig8 leverages existing Helm Chart value specifications, see the [Roadmap](#roadmap) section for more on this topic.
+  - There is no persistence for values or back-end requirements, see the [Roadmap](#roadmap) section for more on this topic.
+- The target Helm Chart repository is network accessible to the web client running Navig8.- 
+  - The target Helm Chart has [values.schema.json](https://helm.sh/docs/topics/charts/#schema-files)
+  - OPTIONAL: the target Helm Chart has a `README.md`.
+  - Navig8 leverages existing Helm Chart value specifications, see the [Roadmap](#roadmap) section for more on this topic.
 - Navig8 provides `helm` commands for execution.
 
 ## Local development
@@ -75,19 +76,19 @@ cd frontend && pnpm dev
 | NAVIG8_REPO_ENTRY           | *        | Entry is a unique key of the entries hash map (<br>https://helm.sh/docs/topics/chart_repository/#the-index-file<br>)                                                                                                                                        |                                                                    |
 | NAVIG8_REPO_NAME            | *        | The name of the repo used in the command `helm repo add $NAVIG8_REPO_NAME $NAVIG8_REPO_URL`                                                                                                                                                                 |                                                                    |
 | NAVIG8_PREDEFINED_NAMESPACE |          | The k8s namespace that will be created and used for the helm installation                                                                                                                                                                                   |                                                                    |
-| NAVIG8_CORS_PROXY_URL       |          | This value is usually used for the local development or for a package solutions like Docker image where cors proxy in the backend folder could be run<br><br>You probably don't need to edit it                                                             |                                                                    |
-| NAVIG8_FAVICON              |          | Icon that can be usually seen inside the tab of the browser and is usually important for crawlers of social media, chat applications and search engines.                                                                                                    | http://localhost:9000/ (Is used by CORS proxy in `backend` folder) |
-| NAVIG8_SEO_TITLE            |          | A small string that represent the content of the page that can be usually seen inside the tab of the browser and is usually important for crawlers of social media, chat applications and search engines.                                                   |                                                                    |
-| NAVIG8_METAS                |          | A json string with data for custom `<meta>` elements in html<br><br>The structure is (Typescript definition):<br>`type Metas = Array<{name: string, content: string}>`<br><br>Example: <br>`[{"name": "description", "content": "This is my description"}]` | []                                                                 |
-| NAVIG8_LINKS                |          | A json string with attributes for custom `<link>` elements in html<br><br>The structure is (Typescript definition):<br>`type Links = Array<Record<string, string>>`<br><br>Example: `[{"rel": "canonical", "href": "http://example.com"}]`                  | []                                                                 |
+| NAVIG8_CORS_PROXY_URL       |          | This value is usually used for the local development or for package solutions like Docker image where cors proxy in the backend folder could be run<br><br>You probably don't need to edit it                                                             |                                                                    |
+| NAVIG8_FAVICON              |          | Icon that can be usually seen inside the tab of the browser and is usually important for crawlers of social media, chat applications, and search engines.                                                                                                    | http://localhost:9000/ (Is used by CORS proxy in `backend` folder) |
+| NAVIG8_SEO_TITLE            |          | A small string that represents the content of the page that can be usually seen inside the tab of the browser and is usually important for crawlers of social media, chat applications, and search engines.                                                   |                                                                    |
+| NAVIG8_METAS                |          | A JSON string with data for custom `<meta>` elements in html<br><br>The structure is (Typescript definition):<br>`type Metas = Array<{name: string, content: string}>`<br><br>Example: <br>`[{"name": "description", "content": "This is my description"}]` | []                                                                 |
+| NAVIG8_LINKS                |          | A JSON string with attributes for custom `<link>` elements in html<br><br>The structure is (Typescript definition):<br>`type Links = Array<Record<string, string>>`<br><br>Example: `[{"rel": "canonical", "href": "http://example.com"}]`                  | []                                                                 |
 
 ### Custom logo
-By default an `icon` from the manifest of specified helm repo is used as logo in the header of the interface.
+By default, an `icon` from the manifest of the specified helm repo is used as a logo in the header of the interface.
 
-It can be overwritten with css rule `background-image` inside `.logo` class in the `frontend/light.css` that is responsible for light theme (We assume that we will support dark theme as well in the nearest future)
+It can be overwritten with the CSS rule `background-image` inside `.logo` class in the `frontend/light.css` that is responsible for the light theme (We assume that we will support the dark theme as well in the nearest future)
 The logo can be of any format supported by the browser (but `.svg` is highly recommended)
 
-This is how it could be done using only terminal:
+This is how it could be done using only the terminal:
 ```shell
 LOGO_URL=url
 cat >> frontend/light.css <<- EOF
@@ -97,7 +98,7 @@ cat >> frontend/light.css <<- EOF
 EOF
 ```
 
-You can also add a file there and set relative path:
+You can also add a file there and set a relative path:
 ```shell
 cp /some/where/else/logo.svg frontend/logo.svg
 cat >> frontend/light.css <<- EOF
@@ -108,13 +109,13 @@ EOF
 ```
 
 ### Themization
-The interface is built using [PrimeVue UI-kit](https://www.primefaces.org/primevue/) that makes it possible to customize theme. 
+The interface is built using [PrimeVue UI-kit](https://www.primefaces.org/primevue/) which makes it possible to customize a theme.
 
-It's possible to make color scheme more brand specific by setting it css variable in `frontend/light.css` file that is dedicated to CSS overwrites for the light theme (We assume that we will support dark theme as well in the nearest future).
+It's possible to make the color scheme more brand-specific by setting it CSS variable in `frontend/light.css` file that is dedicated to CSS overwrites for the light theme (We assume that we will support the dark theme as well in the nearest future).
 
-[There is](https://www.primefaces.org/primevue/colors) a description of color palettes that this UI-kit uses.
+[There is](https://www.primefaces.org/primevue/colors) a description of color palettes that this UI kit uses.
 
-The method of adding new scheme to the `light.css` file can be the same as for [custom logo](#custom-logo)
+The method of adding a new scheme to the `light.css` file can be the same as for [custom logo](#custom-logo)
 ```shell
 cat >> frontend/light.css <<- EOF
 :root {
@@ -127,14 +128,14 @@ EOF
 
 ### CSS rules overwrite
 
-Feel free to fork this repo and change styles yourself, but if fork is not preferable option - 
+Feel free to fork this repo and change styles yourself, but if a fork is not the preferable option -
 the overwrite can be done in the same way as for [custom logo](#custom-logo) and [themization](#themization)
 
 ## Deployment
-Currently it's assumed that the process of deployment will be:
+Currently, it's assumed that the process of deployment will be:
 1. Build frontend static using [Available Customization options](#customization-options).
 2. Deployment to the server that serves static html/js/css
-3. CORS header `Access-Control-Allow-Origin` should be extended for the specified helm chart repo files with domain where navig8 is run.
+3. CORS header `Access-Control-Allow-Origin` should be extended for the specified helm chart repo files with the domain where navig8 is run.
 
 We have plans on simplifying this process. Please see the [Roadmap](#roadmap) section for more details
 
@@ -166,7 +167,7 @@ cd ..
 ```
 5. Copy the output of FE static inside `frontend/dist` folder anywhere you want.
 6. Set `Access-Control-Allow-Origin` for the helm repo you've specified so navig8 could fetch all files it needs.
-For example you host navig8 at `https://navig8-instance.com`. This should be included in the `Access-Control-Allow-Origin` header for all files in the specified helm chart.
+For example, you host navig8 at `https://navig8-instance.com`. This should be included in the `Access-Control-Allow-Origin` header for all files in the specified helm chart.
 
 ## Examples
 
@@ -180,4 +181,3 @@ For example you host navig8 at `https://navig8-instance.com`. This should be inc
 - [ ] Dark theme support
 - [ ] Code of Conduct
 - [ ] Issues template
-    
