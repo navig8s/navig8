@@ -33,7 +33,7 @@ const extractValue = (field: Field): Value => {
   }
 }
 
-const extractDiffFromForm = (form: Fields, defaults: Values) => {
+export const extractDiffFromForm = (form: Fields, defaults: Values) => {
   const walk = (field: Field, path: Array<string | number>, diff: Diff) => {
     const defaultValue = getByPath<Value>(path, defaults)
 
@@ -111,15 +111,12 @@ const extractDiffFromForm = (form: Fields, defaults: Values) => {
 export const NEW_LINE = ' \\\n'
 
 export const generateCommandLines = (
-  form: Fields,
-  defaults: Values,
+  diff: Diff,
   repoUrl: string,
   predefinedRepoName: string,
   repoEntry: string,
   predefinedNamespace?: string,
 ): string[] => {
-  const diff = extractDiffFromForm(form, defaults)
-
   const addRepo = `helm repo add ${predefinedRepoName} ${repoUrl}`
   const installPrefix =
     `helm install ${predefinedRepoName}/${repoEntry}` + NEW_LINE + `--name=${repoEntry}`
