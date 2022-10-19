@@ -18,7 +18,9 @@ The Navig8 web user interface simpifies Kubernetes application deployment by gui
   + [Build time environment variables for the FE:](#build-time-environment-variables-for-the-fe)
   + [Custom logo](#custom-logo)
   + [Themization](#themization)
+  + [CSS rules overwrite](#css-rules-overwrite)
 * [Deployment](#deployment)
+  + [An example of deployment flow](#an-example-of-deployment-flow)
 * [Examples](#examples)
 * [Roadmap](#roadmap)
 
