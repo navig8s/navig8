@@ -1,6 +1,17 @@
-import { generateCommandLines, NEW_LINE } from './model'
+import { generateCommandLines, extractDiffFromForm, NEW_LINE } from './model'
 import { Fields, Text, Number, Switcher, Pairs, List, Select } from '@/store/form/model'
-import { clone, fromPairs } from 'ramda'
+import { clone, fromPairs, pipe } from 'ramda'
+import { ValuesFile } from '@/model/Repo'
+
+const generateCommands = (
+  form: Fields,
+  defaults: ValuesFile,
+  ...settings: [string, string, string, string?]
+) => {
+  const diff = extractDiffFromForm(form, defaults)
+
+  return generateCommandLines(diff, ...settings)
+}
 
 const REPO_URL = 'REPO_URL'
 const REPO_NAME = 'REPO_NAME'
@@ -10,7 +21,7 @@ const repoData = [REPO_URL, REPO_NAME, REPO_ENTRY] as const
 describe('commands generation', () => {
   describe('common repo settings', () => {
     it('should add repo and use its entry', () => {
-      const lines = generateCommandLines([], {}, ...repoData)
+      const lines = generateCommands([], {}, ...repoData)
 
       expect(lines[0]).toBe(`helm repo add REPO_NAME REPO_URL`)
       expect(lines[1]).toBe(
@@ -18,7 +29,7 @@ describe('commands generation', () => {
       )
     })
     it('should add flags of creating new namespace and use it for itself', () => {
-      const installC = generateCommandLines([], {}, ...repoData, 'NAMESPACE')[1]
+      const installC = generateCommands([], {}, ...repoData, 'NAMESPACE')[1]
 
       expect(installC).toEqual(expect.stringContaining('--create-namespace'))
       expect(installC).toEqual(expect.stringContaining("--namespace 'NAMESPACE'"))
@@ -49,7 +60,7 @@ describe('commands generation', () => {
         '--set-json \'list=["TEXT"]\'',
       ].join(NEW_LINE)
 
-      const installC = generateCommandLines(fields, {}, ...repoData)[1]
+      const installC = generateCommands(fields, {}, ...repoData)[1]
 
       expect(installC).toBe(result)
     })
@@ -82,7 +93,7 @@ describe('commands generation', () => {
           { ...listItem, value: 'NOT_DEFAULT' },
         ]),
       ]
-      const installC = generateCommandLines(
+      const installC = generateCommands(
         fields,
         {
           textWithDifferentDefault: 'DEFAULT',
@@ -133,7 +144,7 @@ describe('commands generation', () => {
         ),
         List(false, ['list'], listItem, [listItem]),
       ]
-      const installC = generateCommandLines(
+      const installC = generateCommands(
         fields,
         {
           text: 'DEFAULT',
@@ -178,7 +189,7 @@ describe('commands generation', () => {
         selectWithDifferentDefault: 1,
       }
 
-      const installC = generateCommandLines(fields, defaults, ...repoData)[1]
+      const installC = generateCommands(fields, defaults, ...repoData)[1]
 
       expect(installC).toEqual(expect.stringContaining('--set "nested.path.number=123"'))
       expect(installC).toEqual(expect.stringContaining('--set "numberWithoutDefault=234"'))
@@ -215,7 +226,7 @@ describe('commands generation', () => {
         switcher: true,
       }
 
-      const installC = generateCommandLines(fields, defaults, ...repoData)[1]
+      const installC = generateCommands(fields, defaults, ...repoData)[1]
 
       expect(installC).not.toEqual(expect.stringContaining('--set'))
     })
@@ -228,7 +239,7 @@ describe('commands generation', () => {
       ]
       const jsonValue = JSON.stringify(fromPairs(value))
       const fields: Fields = [Pairs(false, ['nested', 'pairs'], value)]
-      const installC = generateCommandLines(fields, {}, ...repoData)[1]
+      const installC = generateCommands(fields, {}, ...repoData)[1]
 
       expect(installC).toEqual(expect.stringContaining(`--set-json 'nested.pairs=${jsonValue}'`))
     })
@@ -242,7 +253,7 @@ describe('commands generation', () => {
       ]
       const result = JSON.stringify(['DEFAULT', 'ANOTHER_VALUE'])
 
-      const installC = generateCommandLines(fields, {}, ...repoData)[1]
+      const installC = generateCommands(fields, {}, ...repoData)[1]
 
       expect(installC).toEqual(expect.stringContaining(`--set-json 'nested.array=${result}'`))
     })
@@ -264,7 +275,7 @@ describe('commands generation', () => {
       const defaults = { array: [{ one: 'DEFAULT_ONE', two: 'DEFAULT_TWO' }] }
       const result = JSON.stringify({ one: 'DEFAULT_ONE', two: 'DEFAULT_TWO' })
 
-      const installC = generateCommandLines(fields, defaults, ...repoData)[1]
+      const installC = generateCommands(fields, defaults, ...repoData)[1]
 
       expect(installC).toEqual(expect.stringContaining(`--set-json 'array[1]=${result}'`))
     })
@@ -279,7 +290,7 @@ describe('commands generation', () => {
         Text(false, ['every[thing].at=once,'], 'DEFAULT'),
       ]
 
-      const installC = generateCommandLines(fields, {}, ...repoData)[1]
+      const installC = generateCommands(fields, {}, ...repoData)[1]
 
       /* eslint-disable */
       expect(installC).toEqual(expect.stringContaining('--set-string "nested\\.annotation=DEFAULT"'))
@@ -296,7 +307,7 @@ describe('commands generation', () => {
         Pairs(false, ['pairs'], [['one', "one'V"]]),
       ]
 
-      const installC = generateCommandLines(fields, {}, ...repoData)[1]
+      const installC = generateCommands(fields, {}, ...repoData)[1]
 
       expect(installC).toEqual(expect.stringContaining(`--set-json 'array=["\\'DEFAULT\\'"]'`))
       expect(installC).toEqual(expect.stringContaining(`--set-json 'pairs={"one":"one\\'V"}'`))
@@ -304,7 +315,7 @@ describe('commands generation', () => {
     it('should escape double quotes in a string', () => {
       const fields: Fields = [Text(false, ['text'], '"DEFAULT"')]
 
-      const installC = generateCommandLines(fields, {}, ...repoData)[1]
+      const installC = generateCommands(fields, {}, ...repoData)[1]
 
       expect(installC).toEqual(expect.stringContaining(`--set-string "text=\\"DEFAULT\\""`))
     })
@@ -333,7 +344,7 @@ describe('commands generation', () => {
         listSecondItemRemoved: ['ONE', 'TWO'],
       }
 
-      const installC = generateCommandLines(fields, defaults, ...repoData)[1]
+      const installC = generateCommands(fields, defaults, ...repoData)[1]
 
       expect(installC).toEqual(expect.stringContaining('--set "pairsFirstItemRemoved.one=null"'))
       expect(installC).toEqual(expect.stringContaining('--set "pairsSecondItemRemoved.two=null"'))
