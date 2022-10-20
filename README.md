@@ -142,8 +142,7 @@ Currently, it's assumed that the process of deployment will be:
 We have plans on simplifying this process. Please see the [Roadmap](#roadmap) section for more details
 
 ### An example of deployment flow
-
-It is assumed that we are inside the process where pnpm, git and node are available
+It is assumed that we are inside the process where `pnpm`, `git` and `node` are available ([Environment requirements](#environment-requirements)).
 
 1. Clone the repo
 ```shell
