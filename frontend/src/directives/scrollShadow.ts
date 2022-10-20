@@ -132,11 +132,7 @@ export const attachShadow = (element: HTMLElement, horizontal = false, vertical 
 
   ;(element as HTMLElementWithAState)[stateKey] = { unAttach }
 
-  return {
-    unAttach: () => {
-      ;(element as HTMLElementWithAState)[stateKey]?.unAttach()
-    },
-  }
+  return { unAttach }
 }
 
 export const scrollShadow: Directive = {

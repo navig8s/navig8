@@ -54,11 +54,10 @@ const showError = computed(
       <TabView v-model:activeIndex="tab" :class="$style.tabView" class="mt-4">
         <TabPanel header="Form">
           <div :class="$style.tabPanelInner">
-            <!-- TODO: This approach causes performance issues-->
             <Form :active="tab === 0" />
           </div>
         </TabPanel>
-        <TabPanel header="Output">
+        <TabPanel header="Result">
           <div :class="$style.tabPanelInner">
             <Output :active="tab === 1" />
           </div>
