@@ -20,11 +20,7 @@ watch(
 <template>
   <FieldSet v-if="valuesFormStore.form !== null">
     <template v-for="(field, index) in valuesFormStore.form" :key="field.fullKey">
-      <div
-        v-if="index !== 0"
-        class="border-bottom-1 surface-border -mb-2 mt-2"
-        style="height: 1px"
-      />
+      <div v-if="index !== 0" class="border-bottom-1 surface-border mx-0 my-1" style="height: 0" />
       <div v-scroll-shadow.horizontal>
         <Field
           :label="field.title"
