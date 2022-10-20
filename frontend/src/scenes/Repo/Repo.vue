@@ -40,7 +40,7 @@ const showError = computed(
     :logo="repoStore?.entryManifest?.icon"
   >
     <div class="flex flex-column align-items-center">
-      <div :class="$style.content">
+      <div :class="$style.heading">
         <h2 class="text-5xl mt-0 mb-2 capitalize">{{ info.name }}</h2>
         <p
           v-if="!isNil(info?.description)"
@@ -50,46 +50,54 @@ const showError = computed(
           {{ info?.description }}
         </p>
         <p class="text-red-400">Version {{ info.version }}</p>
-        <TabView v-model:activeIndex="tab" :class="$style.tabView" class="mt-4">
-          <TabPanel header="Form">
-            <div :class="$style.tabPanelInner">
-              <!-- TODO: This approach causes performance issues-->
-              <Form :active="tab === 0" v-scroll-shadow.horizontal />
-            </div>
-          </TabPanel>
-          <TabPanel header="Output">
-            <div :class="$style.tabPanelInner">
-              <Output :active="tab === 1" />
-            </div>
-          </TabPanel>
-          <TabPanel v-if="hasReadme" header="README.md">
-            <div :class="$style.tabPanelInner">
-              <Readme :active="tab === 2" />
-            </div>
-          </TabPanel>
-        </TabView>
       </div>
+      <TabView v-model:activeIndex="tab" :class="$style.tabView" class="mt-4">
+        <TabPanel header="Form">
+          <div :class="$style.tabPanelInner">
+            <Form :active="tab === 0" />
+          </div>
+        </TabPanel>
+        <TabPanel header="Result">
+          <div :class="$style.tabPanelInner">
+            <Output :active="tab === 1" />
+          </div>
+        </TabPanel>
+        <TabPanel v-if="hasReadme" header="README.md">
+          <div :class="$style.tabPanelInner">
+            <Readme :active="tab === 2" />
+          </div>
+        </TabPanel>
+      </TabView>
     </div>
   </Layout>
 </template>
 
-<style scoped module>
-.content {
+<style scoped module lang="scss">
+.heading {
   width: 1150px;
 }
 .tabView {
   color: initial;
-}
-.tabView :deep(:global(.p-tabview-nav-container)) {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--surface-card);
-}
-.tabView :deep(:global(.p-tabview-panels)) {
-  padding: 0;
+
+  :deep(:global(.p-tabview-nav-container)) {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--surface-card);
+    width: 100%;
+
+    & > :global(.p-tabview-nav-content) {
+      width: 1150px;
+      margin: 0 auto;
+    }
+  }
+
+  :deep(:global(.p-tabview-panels)) {
+    padding: 0;
+  }
 }
 .tabPanelInner {
-  padding: 1.25rem;
+  padding: 0.75rem 1.25rem;
+  width: 1150px;
 }
 </style>

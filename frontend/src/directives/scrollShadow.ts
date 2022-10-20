@@ -56,6 +56,7 @@ const shadowSpan = (styles: Partial<CSSStyleDeclaration> = {}) => {
   const span = document.createElement('span')
   const basicStyles: Partial<CSSStyleDeclaration> = {
     position: 'absolute',
+    zIndex: '2',
     display: 'none',
     opacity: '.6',
   }
@@ -103,7 +104,7 @@ export const attachShadow = (element: HTMLElement, horizontal = false, vertical 
 
   const realParent = element.parentElement!
   const container = document.createElement('div')
-  realParent.appendChild(container)
+  realParent.replaceChild(container, element)
   container.appendChild(element)
 
   if (horizontal || !vertical) {
@@ -131,11 +132,7 @@ export const attachShadow = (element: HTMLElement, horizontal = false, vertical 
 
   ;(element as HTMLElementWithAState)[stateKey] = { unAttach }
 
-  return {
-    unAttach: () => {
-      ;(element as HTMLElementWithAState)[stateKey]?.unAttach()
-    },
-  }
+  return { unAttach }
 }
 
 export const scrollShadow: Directive = {

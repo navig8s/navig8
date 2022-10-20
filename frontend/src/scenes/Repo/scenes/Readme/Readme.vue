@@ -50,6 +50,7 @@ onBeforeUnmount(() => unAttach.value.forEach((effect) => effect()))
 
 <style lang="scss">
 .markdownContainer {
+  width: 1150px;
   color: var(--text-color);
   padding-top: 1rem;
 

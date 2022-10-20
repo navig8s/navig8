@@ -3,6 +3,8 @@ import FieldSet from '../FieldSet'
 import Item from './Item.vue'
 import Button from 'primevue/button'
 import { clone, isEmpty } from 'ramda'
+import NestedPlaceholder from '../NestedPlaceholder'
+import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{ items: any[]; empty: any; nested?: boolean }>(), {
   nested: false,
@@ -10,6 +12,7 @@ const props = withDefaults(defineProps<{ items: any[]; empty: any; nested?: bool
 const emit = defineEmits<{
   (e: 'input', value: any[]): void
 }>()
+const empty = computed(() => clone(props.empty))
 
 const add = () => {
   props.items.push(clone(props.empty))
@@ -29,6 +32,11 @@ const changeOrder = (direction: 'up' | 'down', index: number) => {
 
 <template>
   <FieldSet>
+    <NestedPlaceholder v-if="isEmpty(props.items)" @click="add">
+      <Item :centerControls="!nested" :isFirst="true" :isLast="true">
+        <slot :item="empty" :index="0" />
+      </Item>
+    </NestedPlaceholder>
     <Item
       v-for="(item, index) in props.items"
       :key="index"
@@ -41,8 +49,13 @@ const changeOrder = (direction: 'up' | 'down', index: number) => {
       <slot :item="item" :index="index" />
     </Item>
     <div>
-      <Button :class="{ 'ml-4': !isEmpty(props.items) }" type="button" @click="add">
-        {{ props.items.length === 0 ? 'Create item' : 'Add item' }}
+      <Button
+        v-if="!isEmpty(props.items)"
+        :class="{ 'ml-4': !isEmpty(props.items) }"
+        type="button"
+        @click="add"
+      >
+        Add item
       </Button>
     </div>
   </FieldSet>
