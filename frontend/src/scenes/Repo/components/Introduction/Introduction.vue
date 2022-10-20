@@ -20,8 +20,8 @@ onBeforeMount(() => !data.dontShowAgain && (visible.value = true))
 </script>
 
 <template>
-  <Dialog header="Introduction" :modal="true" v-model:visible="visible" style="width: 750px">
-    <p class="line-height-2">
+  <Dialog header="Introduction" :modal="true" v-model:visible="visible" style="width: 54rem">
+    <p class="line-height-2" style="width: 90%">
       This interface's purpose is to simplify the installation of
       <b v-if="!isNil(info?.name)">{{ info?.name }}'s&nbsp;</b> through it's Helm chart by guiding
       you through all possible customization values offered via a simple form.
