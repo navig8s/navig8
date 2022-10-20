@@ -43,7 +43,7 @@ const showError = computed(
   >
     <div class="flex flex-column align-items-center">
       <div :class="$style.heading">
-        <Accordion :activeIndex="0" class="w-full">
+        <Accordion class="w-full">
           <AccordionTab header="Introduction">
             <p class="line-height-2" style="max-width: 70%">
               This interface's purpose is to simplify Kubernetes application deployment with the
