@@ -11,6 +11,8 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { useValuesFormStore } from '@/store/form'
 import ErrorBoundary from './components/ErrorBoundary'
+import Accordion from 'primevue/accordion'
+import AccordionTab from 'primevue/accordiontab'
 
 const repoStore = useRepoStore()
 const formStore = useValuesFormStore()
@@ -41,7 +43,25 @@ const showError = computed(
   >
     <div class="flex flex-column align-items-center">
       <div :class="$style.heading">
-        <h2 class="text-5xl mt-0 mb-2 capitalize">{{ info.name }}</h2>
+        <Accordion :activeIndex="0" class="w-full">
+          <AccordionTab header="Introduction">
+            <p class="line-height-2" style="max-width: 70%">
+              This interface's purpose is to simplify Kubernetes application deployment with the
+              <b>{{ info.name }}'s</b> Helm chart by guiding you through customization values it
+              provides via friendly form.
+            </p>
+
+            <h2 class="text-xl my-2">How to:</h2>
+            <ol class="text-base mb-2 mt-1 pl-5">
+              <li class="my-1">Change values that you see necessary to change</li>
+              <li class="my-1">Look at the <b>Result</b> tab to get commands prepared for you</li>
+              <li class="my-1">
+                Execute commands in the environment you want to install the application on
+              </li>
+            </ol>
+          </AccordionTab>
+        </Accordion>
+        <h2 class="text-5xl mb-2 mt-5 capitalize">{{ info.name }}</h2>
         <p
           v-if="!isNil(info?.description)"
           class="mb-2 text-600 line-height-2"

@@ -1,7 +1,7 @@
 # Navig8
 ## Simplify and Visualize Helm Deployments
 
-The Navig8 web user interface simpifies Kubernetes application deployment by guiding users through [Helm Chart values](https://helm.sh/docs/chart_best_practices/values/).
+The Navig8 web user interface simplifies Kubernetes application deployment by guiding users through [Helm Chart values](https://helm.sh/docs/chart_best_practices/values/).
 
 It's logic executes only on frontend side which guarantees no sensitive data filled in its form will ever be implicitly processed somewhere outside user's computer.
 
