@@ -20,7 +20,7 @@ The Navig8 web user interface simpifies Kubernetes application deployment by gui
   + [Build time environment variables for the FE:](#build-time-environment-variables-for-the-fe)
   + [Custom logo](#custom-logo)
   + [Themization](#themization)
-  + [CSS rules overwrite](#css-rules-overwrite)
+  + [Overwriting CSS rules](#overwriting-css-rules)
 * [Deployment](#deployment)
   + [An example of deployment flow](#an-example-of-deployment-flow)
 * [Examples](#examples)
@@ -126,10 +126,10 @@ cat >> frontend/light.css <<- EOF
 EOF
 ```
 
-### CSS rules overwrite
+### Overwriting CSS rules
 
-Feel free to fork this repo and change styles yourself, but if a fork is not the preferable option -
-the overwrite can be done in the same way as for [custom logo](#custom-logo) and [themization](#themization)
+Feel free to fork this repo and change styles or whatever you want, but if a fork is not the preferable option -
+an overwriting can be done in the same way as for [custom logo](#custom-logo) and [themization](#themization)
 
 ## Deployment
 Currently, it's assumed that the process of deployment will be:
