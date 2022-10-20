@@ -15,14 +15,13 @@ onBeforeMount(() => (id.value = uuidV4()))
 </script>
 
 <template>
-  <div
-    :class="[$style.field, `gap-${vertical ? 2 : 3}`, { 'flex-column': vertical }]"
-    class="flex mt-3"
-  >
+  <div :class="[`gap-${vertical ? 2 : 3}`, { 'flex-column': vertical }]" class="flex mt-3">
     <div
-      :class="{ 'justify-content-end flex-shrink-0 text-right': !vertical }"
+      :class="{
+        'justify-content-end flex-shrink-0 text-right': !vertical,
+        [$style.column]: !vertical,
+      }"
       class="flex border-gray-600"
-      style="max-width: 500px; width: calc(50% - 0.5rem)"
     >
       <label :for="id">
         <span class="text-base font-bold inline-block">
@@ -30,20 +29,31 @@ onBeforeMount(() => (id.value = uuidV4()))
         </span>
         <template v-if="label !== path">
           <br />
-          <span class="text-orange-700 inline-block my-1"> {{ path }} </span>
+          <span
+            class="text-orange-700 inline-block"
+            :class="{
+              'my-1': vertical || !isNil(props.description),
+              'mt-1': !vertical && isNil(props.description),
+            }"
+          >
+            {{ path }}
+          </span>
         </template>
         <br />
         <span
           v-if="!isNil(props.description)"
-          class="inline-block text-sm text-color-secondary my-1"
+          class="inline-block text-sm text-color-secondary"
+          :class="{ 'mt-1': !vertical, 'my-1': vertical }"
         >
           {{ props.description }}
         </span>
       </label>
     </div>
     <div
-      :class="{ 'flex flex-column flex-shrink-0 justify-content-end': !vertical }"
-      style="width: calc(50% - 0.5rem)"
+      :class="{
+        [$style.column]: !vertical,
+        'flex flex-column flex-shrink-0 justify-content-end': !vertical,
+      }"
     >
       <slot :id="id" />
     </div>
@@ -51,7 +61,7 @@ onBeforeMount(() => (id.value = uuidV4()))
 </template>
 
 <style scoped module>
-.field {
-  min-width: 34.92rem;
+.column {
+  width: calc(50% - 0.5rem);
 }
 </style>

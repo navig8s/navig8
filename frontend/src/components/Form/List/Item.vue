@@ -22,7 +22,7 @@ const changeOrder = (direction: Direction) => {
     :class="{ 'align-items-start': !centerControls, 'align-items-center': centerControls }"
     class="flex gap-2"
   >
-    <div :class="{ 'mt-1': !centerControls }" class="flex flex-column">
+    <div :class="{ 'mt-1': !centerControls }" class="flex flex-column flex-shrink-0">
       <Icon
         name="ANGLE_UP"
         :disabled="isFirst"
@@ -36,13 +36,17 @@ const changeOrder = (direction: Direction) => {
         @click="changeOrder('down')"
       />
     </div>
-    <slot />
-    <Icon
-      name="TIMES"
-      class="text-red-300 hover:text-red-500"
-      :class="{ 'mt-2': !centerControls }"
-      @click="emit('remove')"
-    />
+    <div class="flex-grow-1">
+      <slot />
+    </div>
+    <div class="flex-shrink-0">
+      <Icon
+        name="TIMES"
+        class="text-red-300 hover:text-red-500"
+        :class="{ 'mt-2': !centerControls }"
+        @click="emit('remove')"
+      />
+    </div>
   </div>
 </template>
 

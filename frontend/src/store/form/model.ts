@@ -195,7 +195,7 @@ export const List = (
 export type Field = Text | Number | Switcher | List | Pairs | Select
 
 export type Fields = Field[]
-type NestedFields = Field | Fields
+export type NestedFields = Field | Fields
 
 const isPrimitiveArray = (array: any[]): array is Array<string | number> =>
   array.every(
