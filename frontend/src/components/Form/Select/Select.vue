@@ -31,5 +31,3 @@ const update = (value: string | number) => emit('input', value === EMPTY ? '' : 
     @update:modelValue="update($event)"
   />
 </template>
-
-<style scoped></style>

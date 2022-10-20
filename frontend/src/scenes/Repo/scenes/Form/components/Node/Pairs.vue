@@ -11,5 +11,3 @@ const items = shallowRef<Array<[string, string]>>([])
 <template>
   <PairsUI :pairs="props.field.value" @input="props.field.value = $event" />
 </template>
-
-<style scoped></style>

@@ -8,5 +8,3 @@ import { DEV } from './environment'
   <LeavingPageWarning v-if="!DEV" />
   <Repo />
 </template>
-
-<style scoped></style>

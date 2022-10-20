@@ -25,5 +25,3 @@ const props = defineProps<{ field: Field; id?: string }>()
   <Pairs v-if="props.field.type === 'pairs'" :field="props.field" />
   <Select v-if="props.field.type === 'select'" :field="props.field" />
 </template>
-
-<style scoped></style>

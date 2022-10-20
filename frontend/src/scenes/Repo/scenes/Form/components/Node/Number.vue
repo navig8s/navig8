@@ -12,5 +12,3 @@ const props = defineProps<{ field: INumberField }>()
     @input="props.field.value = $event"
   />
 </template>
-
-<style scoped></style>

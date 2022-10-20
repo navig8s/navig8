@@ -34,5 +34,3 @@ watch(
     </template>
   </FieldSet>
 </template>
-
-<style scoped></style>

@@ -56,5 +56,3 @@ const updatePair = (index: number, key: string, value: string) => {
     </div>
   </FieldSet>
 </template>
-
-<style scoped></style>
