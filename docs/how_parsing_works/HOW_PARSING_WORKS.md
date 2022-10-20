@@ -208,12 +208,12 @@ A single variant of implementation (it will be skipped otherwise):
 
 Supported keys:
 
-| Key         | Required | Description                                                                                                                              | Default                                              |
-|-------------|----------|------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------|
-| title       |          | Short title dedicated to its value                                                                                                       | The interface fallbacks to the full key path instead |
-| description |          | Longer description of the value                                                                                                          |                                                      |
-| default     |          | Default value that will be used in case `values.yaml` doesn't have it                                                                    |                                                      |
-| items       | *        | A declaration of the structure of the array's items. Should be an object. If it's a list of object the first declaration will be taken.  |                                                      |
+| Key         | Required | Description                                                                                                                                      | Default                                              |
+|-------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------|
+| title       |          | Short title dedicated to its value                                                                                                               | The interface fallbacks to the full key path instead |
+| description |          | Longer description of the value                                                                                                                  |                                                      |
+| default     |          | Default value that will be used in case `values.yaml` doesn't have it                                                                            |                                                      |
+| items       | *        | A declaration of the structure of the array's items. Should be a single declaration. If it's a list of declarations the first one will be taken. |                                                      |
 
 An array of strings as minimal working example:
 
