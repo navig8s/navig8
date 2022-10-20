@@ -1,6 +1,6 @@
 import { generateCommandLines, extractDiffFromForm, NEW_LINE } from './model'
 import { Fields, Text, Number, Switcher, Pairs, List, Select } from '@/store/form/model'
-import { clone, fromPairs, pipe } from 'ramda'
+import { clone, fromPairs } from 'ramda'
 import { ValuesFile } from '@/model/Repo'
 
 const generateCommands = (
