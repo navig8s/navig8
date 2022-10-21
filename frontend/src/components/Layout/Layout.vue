@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { isNil } from 'ramda'
+import { NAVIG8_COPYRIGHT } from '@/environment'
 
 const props = defineProps<{ logo?: string }>()
 const logoRef = ref<HTMLDivElement>()
@@ -16,6 +17,9 @@ const programmaticLogo = computed(() => {
 
   return undefined
 })
+const copyright = computed(() =>
+  (NAVIG8_COPYRIGHT ?? '').replaceAll('{year}', new Date().getFullYear().toString()),
+)
 </script>
 
 <template>
@@ -34,7 +38,7 @@ const programmaticLogo = computed(() => {
     </main>
     <footer class="p-5 border-top-2 surface-border">
       <div :class="$style.inner" class="flex justify-content-between">
-        <div class="text-base">©2022 Kasten by Veeam®</div>
+        <div class="text-base">{{ copyright }}</div>
         <div class="text-base">
           <a
             href="https://navig8.dev/"

@@ -13,6 +13,7 @@ const emit = defineEmits<{
   <Textarea
     rows="1"
     cols="58"
+    class="w-full"
     :value="props.value ?? defaultValue"
     :autoResize="true"
     @update:modelValue="emit('input', $event)"

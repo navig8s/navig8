@@ -11,6 +11,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { useValuesFormStore } from '@/store/form'
 import ErrorBoundary from './components/ErrorBoundary'
+import Introduction from './components/Introduction'
 
 const repoStore = useRepoStore()
 const formStore = useValuesFormStore()
@@ -28,6 +29,7 @@ const showError = computed(
 </script>
 
 <template>
+  <Introduction v-if="repoStore.usefulChartFiles.hasData()" />
   <ErrorBoundary v-if="showError" />
   <div
     v-if="repoStore.usefulChartFiles.isPendingFirst()"
@@ -41,7 +43,7 @@ const showError = computed(
   >
     <div class="flex flex-column align-items-center">
       <div :class="$style.heading">
-        <h2 class="text-5xl mt-0 mb-2 capitalize">{{ info.name }}</h2>
+        <h2 class="text-5xl mb-2 capitalize">{{ info.name }}</h2>
         <p
           v-if="!isNil(info?.description)"
           class="mb-2 text-600 line-height-2"

@@ -15,7 +15,13 @@ onBeforeMount(() => (id.value = uuidV4()))
 </script>
 
 <template>
-  <div :class="[`gap-${vertical ? 2 : 3}`, { 'flex-column': vertical }]" class="flex mt-3">
+  <div
+    :class="[
+      `gap-${vertical ? 2 : 3}`,
+      { 'flex-column': vertical, 'py-2': !vertical, 'px-1': !vertical },
+    ]"
+    class="flex"
+  >
     <div
       :class="{
         'justify-content-end flex-shrink-0 text-right': !vertical,

@@ -13,5 +13,3 @@ const options = computed(() =>
 <template>
   <SelectUI :options="options" :value="props.field.value" @input="props.field.value = $event" />
 </template>
-
-<style scoped></style>

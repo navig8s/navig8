@@ -23,7 +23,7 @@ import { computed, ref } from 'vue'
 import { REPO_ENTRY, REPO_URL } from '@/environment'
 
 const getRepoManifest = (url: string) =>
-  corsProxyRequest(url.replace(/\/$/, '') + '/index.yaml')
+  corsProxyRequest(url.replace(/\/$/, '') + '/index.yaml', { cache: 'no-store' })
     .then((response) => response.text())
     .then((raw) => yaml.load(raw, { filename: 'index.yaml', json: true }))
     .then(decodeWith(repoManifestDecoder(REPO_ENTRY), RepoManifestStructureInvalidError as any))
@@ -84,7 +84,7 @@ export const useRepoStore = defineStore('repo', () => {
       .then((entryManifestResult) => {
         entryManifest.value = entryManifestResult
 
-        return corsProxyRequest(entryManifestResult.urls[0])
+        return corsProxyRequest(entryManifestResult.urls[0], { cache: 'no-store' })
       })
       .then((res) => res.arrayBuffer())
       .then(pako.inflate) // Decompress gzip using pako
