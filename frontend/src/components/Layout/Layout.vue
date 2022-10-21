@@ -41,12 +41,13 @@ const copyright = computed(() =>
         <div class="text-base">{{ copyright }}</div>
         <div class="text-base">
           <a
-            href="https://navig8.dev/"
+            href="https://github.com/navig8s/navig8"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             class="text-primary no-underline hover:underline"
-            >Built with Navig8</a
           >
+            Built with Navig8
+          </a>
         </div>
       </div>
     </footer>
