@@ -24,9 +24,7 @@ describe('commands generation', () => {
       const lines = generateCommands([], {}, ...repoData)
 
       expect(lines[0]).toBe(`helm repo add REPO_NAME REPO_URL`)
-      expect(lines[1]).toBe(
-        ['helm install REPO_NAME/REPO_ENTRY', '--name=REPO_ENTRY'].join(NEW_LINE),
-      )
+      expect(lines[1]).toBe('helm install REPO_ENTRY REPO_NAME/REPO_ENTRY')
     })
     it('should add flags of creating new namespace and use it for itself', () => {
       const installC = generateCommands([], {}, ...repoData, 'NAMESPACE')[1]
@@ -50,8 +48,7 @@ describe('commands generation', () => {
       ]
 
       const result = [
-        'helm install REPO_NAME/REPO_ENTRY',
-        '--name=REPO_ENTRY',
+        'helm install REPO_ENTRY REPO_NAME/REPO_ENTRY',
         '--set-string "text=TEXT"',
         '--set "number=123"',
         '--set "switcher=true"',

@@ -118,8 +118,7 @@ export const generateCommandLines = (
   predefinedNamespace?: string,
 ): string[] => {
   const addRepo = `helm repo add ${predefinedRepoName} ${repoUrl}`
-  const installPrefix =
-    `helm install ${predefinedRepoName}/${repoEntry}` + NEW_LINE + `--name=${repoEntry}`
+  const installPrefix = `helm install ${repoEntry} ${predefinedRepoName}/${repoEntry}`
 
   const createNamespace = isNil(predefinedNamespace)
     ? ''
