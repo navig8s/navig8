@@ -1,5 +1,8 @@
 # Navig8
+
 ## Simplify and Visualize Helm Deployments
+
+<img src="./logo-icon-navig8.svg" width="200">
 
 The Navig8 web user interface simplifies Kubernetes application deployment by guiding users through [Helm Chart values](https://helm.sh/docs/chart_best_practices/values/).
 
