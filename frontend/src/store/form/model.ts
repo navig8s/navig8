@@ -204,8 +204,8 @@ const isPrimitiveArray = (array: any[]): array is Array<string | number> =>
   )
 
 const getDefault = <V>(isCorrectType: boolean, defaultValue: any, fallback: V, fromValues?: V) => {
-  if (isCorrectType) return defaultValue
   if (!isNil(fromValues)) return fromValues
+  if (isCorrectType) return defaultValue
 
   return fallback
 }
