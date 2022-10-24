@@ -49,7 +49,7 @@ It's logic executes only on frontend side which guarantees no sensitive data fil
 #### Using Makefile (from scratch)
 ```shell
 make install
-cd frontend & cp .env.template .env # Add values for required variables there. Each variable is documented inside the file.
+cd frontend & cp .env.template .env.development.local # Add values for required variables there. Each variable is documented inside the file.
 cd .. # Go to the root of the repo
 make start
 ```
@@ -62,7 +62,7 @@ make start
 cd backend && pnpm install && pnpm start # Install and run backend
 # Go to the separate terminal/cmd
 cd frontend && pnpm install
-cp .env.template .env # Add values for required variables there. Each variable is documented inside the file.
+cp .env.template .env.development.local # Add values for required variables there. Each variable is documented inside the file.
 pnpm dev
 ```
 #### Without Makefile (after everything is already installed and set)
