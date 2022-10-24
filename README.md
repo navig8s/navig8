@@ -48,7 +48,7 @@ It's logic executes only on frontend side which guarantees no sensitive data fil
 ### To start locally:
 #### Using Makefile (from scratch)
 ```shell
-make install # Or run commands from the
+make install
 cd frontend & cp .env.template .env # Add values for required variables there. Each variable is documented inside the file.
 cd .. # Go to the root of the repo
 make start
