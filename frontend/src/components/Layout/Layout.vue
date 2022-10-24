@@ -28,7 +28,7 @@ const copyright = computed(() =>
       <div :class="$style.inner" class="flex justify-content-center">
         <div
           ref="logoRef"
-          class="logo h-4rem w-7rem bg-no-repeat bg-contain"
+          class="logo h-4rem w-7rem bg-no-repeat bg-contain bg-center"
           :style="{ backgroundImage: programmaticLogo }"
         />
       </div>
