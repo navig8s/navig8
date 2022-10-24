@@ -1,5 +1,5 @@
 import { JSONSchema, SchemaFile, ValuesFile } from '@/model/Repo'
-import { clone, isEmpty, isNil, path as getByPath, tryCatch } from 'ramda'
+import { clone, isEmpty, isNil, path as getByPath, pipe, tryCatch } from 'ramda'
 import { FormConstructionError } from './error'
 
 export type PrimitiveValue = string | number | boolean
@@ -203,7 +203,12 @@ const isPrimitiveArray = (array: any[]): array is Array<string | number> =>
       typeof option !== 'object' && typeof option !== 'function' && typeof option !== 'symbol',
   )
 
-const getDefault = <V>(isCorrectType: boolean, defaultValue: any, fallback: V, fromValues?: V) => {
+const getDefault = <V>(
+  isCorrectType: boolean,
+  defaultValue: any,
+  fallback: V,
+  fromValues?: V,
+): V => {
   if (!isNil(fromValues)) return fromValues
   if (isCorrectType) return defaultValue
 
@@ -281,14 +286,22 @@ const generateFormFields = (
     }
     case 'object': {
       if (isNil(root.properties)) {
-        const defaultValue = getDefault(
-          !isNil(root.default) && Object.keys(root.default).length > 0,
-          isNil(root.default) ? root.default : Object.entries(root.default),
-          [],
-          Object.entries(getByPath(path, values) ?? {}),
+        return Pairs(
+          isSelfRequired,
+          path,
+          pipe(
+            () =>
+              getDefault<Record<string, string>>(
+                !isNil(root.default) && Object.keys(root.default).length > 0,
+                root.default,
+                {},
+                getByPath(path, values),
+              ),
+            Object.entries,
+          )(),
+          root.title,
+          root.description,
         )
-
-        return Pairs(isSelfRequired, path, defaultValue, root.title, root.description)
       }
 
       return Object.entries(root.properties)
