@@ -1,8 +1,6 @@
 name: Publish Docker image
 
 on:
-#  release:
-#    types: [published]
   push:
     tags:
       - 'v*'
@@ -35,9 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: |
-            ${{ github.repository }}
-            ghcr.io/${{ github.repository }}
+          images: ghcr.io/${{ github.repository }}
           flavor: |
             latest=false
           tags: |
@@ -50,10 +46,7 @@ jobs:
           context: .
           file: ./docker/Dockerfile
           load: true
-#          push: true
           no-cache: true
-          tags: ${{ steps.meta.outputs.tags }},test_tag,${{ steps.meta.outputs.version || steps.version.outputs.current-version }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      - name: test
-        run: |
-          docker image inspect test_tag;
+          push: ${{ github.event_name != 'pull_request' }}
