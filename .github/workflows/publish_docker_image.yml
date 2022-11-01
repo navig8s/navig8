@@ -45,7 +45,6 @@ jobs:
         with:
           context: .
           file: ./docker/Dockerfile
-          load: true
           no-cache: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
