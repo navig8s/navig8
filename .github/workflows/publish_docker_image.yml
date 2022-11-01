@@ -38,8 +38,8 @@ jobs:
           images: |
             ${{ github.repository }}
             ghcr.io/${{ github.repository }}
-          flavor:
-            latest: false
+          flavor: |
+            latest=false
           tags: |
             type=ref,event=tag
             type=semver,pattern={{version}}
