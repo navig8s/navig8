@@ -34,6 +34,3 @@ pipe(
     prettify,
     html => fs.writeFileSync(path.resolve(frontendDir, 'dist/index.html'), html)
 )();
-
-fs.unlinkSync(manifestFilePath)
-fs.unlinkSync(templateFilePath)

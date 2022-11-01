@@ -4,6 +4,7 @@ import path from 'path'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { useDynamicPublicPath } from 'vite-plugin-dynamic-publicpath'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -39,6 +40,7 @@ export default ({ mode }) => {
           NAVIG8_TOP_BODY: config.env.NAVIG8_TOP_BODY,
           NAVIG8_BOTTOM_BODY: config.env.NAVIG8_BOTTOM_BODY,
         })),
+      isDev && useDynamicPublicPath(),
     ].filter(Boolean),
     envPrefix: 'NAVIG8_',
   })

@@ -8,4 +8,6 @@ export const PREDEFINED_NAMESPACE =
 export const DOCUMENTATION_URL =
   import.meta.env.NAVIG8_DOCUMENTATION_URL ?? window._env_?.NAVIG8_DOCUMENTATION_URL
 export const NAVIG8_COPYRIGHT = import.meta.env.NAVIG8_COPYRIGHT ?? window._env_?.NAVIG8_COPYRIGHT
+export const NAVIG8_BASE_URL =
+  import.meta.env.NAVIG8_BASE_URL ?? window._env_?.NAVIG8_BASE_URL ?? '/'
 export const DEV = import.meta.env.DEV ?? false

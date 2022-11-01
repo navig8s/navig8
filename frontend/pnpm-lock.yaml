@@ -36,6 +36,7 @@ specifiers:
   uuid: ^9.0.0
   vee-validate: ^4.6.9
   vite: ^3.1.0
+  vite-plugin-dynamic-publicpath: ^1.1.2
   vite-plugin-ejs: ^1.5.0
   vue: ^3.2.37
   vue-tsc: ^0.40.4
@@ -79,6 +80,7 @@ devDependencies:
   ts-jest: 29.0.1_jksntdpmkmo5cthob65gehuuvi
   typescript: 4.8.3
   vite: 3.1.1_sass@1.55.0
+  vite-plugin-dynamic-publicpath: 1.1.2
   vite-plugin-ejs: 1.5.0
   vue-tsc: 0.40.13_typescript@4.8.3
 
@@ -1621,6 +1623,10 @@ packages:
     resolution: {integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==}
     dependencies:
       is-arrayish: 0.2.1
+    dev: true
+
+  /es-module-lexer/0.6.0:
+    resolution: {integrity: sha512-f8kcHX1ArhllUtb/wVSyvygoKCznIjnxhLxy7TCvIiMdT7fL4ZDTIKaadMe6eLvOXg6Wk02UeoFgUoZ2EKZZUA==}
     dev: true
 
   /esbuild-android-64/0.15.7:
@@ -3719,6 +3725,12 @@ packages:
       '@vue/devtools-api': 6.2.1
       vue: 3.2.39
     dev: false
+
+  /vite-plugin-dynamic-publicpath/1.1.2:
+    resolution: {integrity: sha512-oZpGyNviJQ6cBJizvjuqp+gVj4H3NphSm5ipP1N3AeRTzCMbwix9kvlbwNnRXLJh3FiE53s4beKIlS6w6/gGXQ==}
+    dependencies:
+      es-module-lexer: 0.6.0
+    dev: true
 
   /vite-plugin-ejs/1.5.0:
     resolution: {integrity: sha512-ws49Kv9kvwaqfBlbfs2ZJEI2i06z2q6gKmtl6oSEsnJ0NgNUenMK8iHCZ+m+zI9I4XZ2Y+czbFI5HnJCBY+w0g==}

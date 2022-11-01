@@ -1,10 +1,41 @@
 #!/usr/bin/env bash
 
-CURRENT_DIR="$(dirname "$(realpath "$0")")";
-PROJECT_DIR="$(realpath "$CURRENT_DIR/../../")"
+### Functions' declaration start
 
-DEFAULT_NAVIG8_CORS_PROXY_URL=/proxy/
-export NAVIG8_CORS_PROXY_URL=${NAVIG8_CORS_PROXY_URL:-/proxy/}
+#######################################
+# Array join
+# Arguments:
+#   Delimiter
+#   ...array elements
+#######################################
+function join_by { local IFS="$1"; shift; echo "$*"; }
+
+#######################################
+# Checks if required env variables were passed. Exits otherwise.
+# Globals:
+#   CURRENT_DIR
+#   PROJECT_DIR
+# Globals for subcommands:
+#   All variables from 'frontend/.env.template'
+# Arguments:
+#   Name of the env file
+#######################################
+function check_required_env {
+  local REQUIRED_ENV=(NAVIG8_REPO_URL NAVIG8_REPO_ENTRY NAVIG8_REPO_NAME)
+
+  for index in "${!REQUIRED_ENV[@]}"
+   do
+      varname="${REQUIRED_ENV[$index]}"
+      value=$(printf '%s\n' "${!varname}")
+
+      [[ -n "$value" ]] && unset -v "REQUIRED_ENV[$index]"
+    done
+
+  if (( ${#REQUIRED_ENV[@]} != 0 )); then
+    echo "Container failed to start, the following required env variables weren't found: $(join_by , "${REQUIRED_ENV[@]}")"
+    exit 1
+  fi
+}
 
 #######################################
 # Generates necessary files for the frontend to support env variables handling from the RUN stage
@@ -14,7 +45,6 @@ export NAVIG8_CORS_PROXY_URL=${NAVIG8_CORS_PROXY_URL:-/proxy/}
 # Globals for subcommands:
 #   All variables from 'frontend/.env.template'
 # Arguments:
-#   Name of the env object in js
 #   Name of the env file
 #######################################
 function gen_frontend {
@@ -42,18 +72,18 @@ function gen_frontend {
 
   # Render index.html's ejs template
   NAVIG8_TOP_HEAD="${NAVIG8_TOP_HEAD}
-    <script src=\"${FILE_NAME}\"></script>" \
+    <script src=\"${BASE_URL}${FILE_NAME}\"></script>" \
     node \
     --no-deprecation \
     "$CURRENT_DIR/render_index.cjs";
 
   echo 'Generated env for frontend'
-
-  pnpm remove -s html-prettify ejs ramda.pipe
 }
 
 #######################################
 # Starts nginx server with reverse proxy to CORS proxy
+# Globals:
+#   PROJECT_DIR
 #######################################
 function start_nginx_with_cors_proxy {
   local BACKEND_DIR="$(realpath "$PROJECT_DIR/backend")"
@@ -66,19 +96,38 @@ function start_nginx_with_cors_proxy {
 }
 
 #######################################
-# Starts nginx server
+# Starts nginx server for static files
+# Globals:
+#   PROJECT_DIR
 #######################################
-function start_nginx {
+function start_nginx_without_cors_proxy {
   cp "$PROJECT_DIR/docker/nginx.conf" /etc/nginx/sites-available/default
   /usr/sbin/nginx -g 'daemon off;';
 }
 
+#######################################
+# Starts nginx server with or without default CORS proxy server
+# Globals:
+#   DEFAULT_NAVIG8_CORS_PROXY_URL
+#   NAVIG8_CORS_PROXY_URL
+#######################################
+function start_nginx {
+  if [ "$DEFAULT_NAVIG8_CORS_PROXY_URL" = "$NAVIG8_CORS_PROXY_URL" ]; then
+    start_nginx_with_cors_proxy;
+  else
+    start_nginx;
+  fi
+}
+### Functions' declaration end
+
+CURRENT_DIR="$(dirname "$(realpath "$0")")";
+PROJECT_DIR="$(realpath "$CURRENT_DIR/../../")"
+
+DEFAULT_NAVIG8_CORS_PROXY_URL=/proxy/
+export NAVIG8_CORS_PROXY_URL=${NAVIG8_CORS_PROXY_URL:-"$DEFAULT_NAVIG8_CORS_PROXY_URL"}
+export NAVIG8_BASE_URL=${NAVIG8_BASE_URL:-/}
+
+check_required_env;
 # Generate frontend runtime env and index.html
 gen_frontend env.runtime.js;
-
-# Default CORS proxy server
-if [ "$DEFAULT_NAVIG8_CORS_PROXY_URL" = "$NAVIG8_CORS_PROXY_URL" ]; then
-  start_nginx_with_cors_proxy;
-else
-  start_nginx;
-fi
+start_nginx;
