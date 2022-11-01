@@ -3,9 +3,7 @@ name: Publish Docker image
 on:
 #  release:
 #    types: [published]
-  push:
-    branches:
-      - 'master'
+  create:
     tags:
       - 'v*'
   pull_request:
@@ -39,7 +37,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=ref,event=branch
+            type=ref,event=tag
             type=semver,pattern={{version}}
 
       - name: Build and push Docker image
@@ -50,10 +48,8 @@ jobs:
           load: true
 #          push: true
           no-cache: true
-          tags: ${{ steps.meta.outputs.tags }},test_tag,${{ steps.version.outputs.current-version }}
+          tags: ${{ steps.meta.outputs.tags }},test_tag,${{ steps.meta.outputs.version || steps.version.outputs.current-version }}
           labels: ${{ steps.meta.outputs.labels }}
       - name: test
         run: |
           docker image inspect test_tag;
-          echo "Version from meta ${{ steps.meta.outputs.version }}"
-          echo "Version from npm ${{ steps.version.outputs.current-version }}"
