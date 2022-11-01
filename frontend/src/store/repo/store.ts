@@ -42,11 +42,8 @@ const findUsefulFilesInArchive = async (files: ArchiveFile[]): Promise<UsefulCha
     readAs: A,
     ErrorConstructor?: ErrorConstructor,
   ): R => {
-    const file = files.find((file) =>
-      variants.some(
-        (name) =>
-          `${import.meta.env.NAVIG8_REPO_ENTRY}/${name}`.toLowerCase() === file.name.toLowerCase(),
-      ),
+    const file = files.find((file) => variants
+        .some((name) => `${REPO_ENTRY}/${name}`.toLowerCase() === file.name.toLowerCase()),
     )
 
     isNil(file) && !isNil(ErrorConstructor) && throwInline(new ErrorConstructor())
