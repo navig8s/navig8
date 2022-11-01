@@ -46,7 +46,6 @@ jobs:
         with:
           context: .
           file: ./docker/Dockerfile
-          no-cache: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: ${{ github.event_name != 'pull_request' }}
