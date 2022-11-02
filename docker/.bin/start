@@ -3,7 +3,7 @@
 ### Functions' declaration start
 
 #######################################
-# Array join
+# Join array into a string with given one char delimiter.
 # Arguments:
 #   Delimiter
 #   ...array elements
@@ -12,9 +12,6 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 
 #######################################
 # Checks if required env variables were passed. Exits otherwise.
-# Globals:
-#   CURRENT_DIR
-#   PROJECT_DIR
 # Globals for subcommands:
 #   All variables from 'frontend/.env.template'
 # Arguments:

@@ -41,6 +41,7 @@ frontend;
 backend;
 ejs_renderer;
 
+rm "$CURRENT_DIR/prepare"
 mv "$PROJECT_DIR/docker" "$TMP_DIR/docker"
 pushd / || exit 1
   rm -rf "$PROJECT_DIR"
