@@ -9,7 +9,7 @@ The Navig8 web user interface simplifies Kubernetes application deployment by gu
 It's logic executes only on frontend side which guarantees no sensitive data filled in its form will ever be implicitly processed somewhere outside user's computer.
 
 ---
-
+ 
 ## Table of contents
 * [Assumptions](#assumptions)
 * [Local development](#local-development)
