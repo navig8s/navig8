@@ -52,7 +52,7 @@ function gen_frontend {
 
   local ENV_NAMES=($(grep -o '^[a-zA-Z0-9_]*=' "$FRONTEND_DIR/.env.template" | sed 's/.$//'))
   local FILE_NAME="${1:-"env.runtime.js"}"
-  local FILE_PATH="${FRONTEND_DIR}/dist/${FILE_NAME}"
+  local FILE_PATH="${FRONTEND_DIR}/${FILE_NAME}"
 
   # Create config file
   rm -f "$FILE_PATH"
@@ -72,10 +72,10 @@ function gen_frontend {
 
   # Render index.html's ejs template
   NAVIG8_TOP_HEAD="${NAVIG8_TOP_HEAD}
-    <script src=\"${BASE_URL}${FILE_NAME}\"></script>" \
+    <script src=\"${NAVIG8_BASE_URL}${FILE_NAME}\"></script>" \
     node \
     --no-deprecation \
-    "$CURRENT_DIR/render_index.cjs";
+    "$CURRENT_DIR/render_index.js";
 
   echo 'Generated env for frontend'
 }
@@ -87,12 +87,10 @@ function gen_frontend {
 #######################################
 function start_nginx_with_cors_proxy {
   local BACKEND_DIR="$(realpath "$PROJECT_DIR/backend")"
-  pushd $BACKEND_DIR && pnpm run-daemon && popd || exit
-
-  echo 'CORS proxy started'
-
   cp "$PROJECT_DIR/docker/nginx.with_cors_proxy.conf" /etc/nginx/sites-available/default
-  /usr/sbin/nginx -g 'daemon off;';
+
+  # Run them in parallel
+  node "$BACKEND_DIR/index.js" & /usr/sbin/nginx -g 'daemon off;';
 }
 
 #######################################
