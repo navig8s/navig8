@@ -163,9 +163,8 @@ Docker solution could be run in [k8s cluster](https://kubernetes.io/) or by one 
 It's highly recommended to set CORS headers ([Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)) for helm repo, that is going to be used by navig8 and thus handle CORS issue.
 
 In case it's not an option - there is a possibility to use a CORS proxy for Docker environment (see [settings](#environment-variables)).
-Current realisation of the CORS proxy that is available in Docker environment intended to be used as same-origin request that nginx proxies to the specified chart repo's url
-(request to `/repo` will be proxied to `NAVIG8_REPO_URL` in current implementation).
-
+Current realisation of the CORS proxy that is available in Docker environment is intended to be used for same-origin requests that nginx will proxy to the specified chart repo's url
+(frontend requests `/repo` that is proxied to `NAVIG8_REPO_URL` in current implementation).
 
 ## Examples
 
