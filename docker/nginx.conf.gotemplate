@@ -14,6 +14,9 @@ server {
             proxy_pass {{ .Env.NAVIG8_REPO_URL }};
             proxy_redirect off;
             proxy_ssl_server_name on;
+            proxy_hide_header: cookie;
+            proxy_hide_header: cookie2;
+            proxy_hide_header: set-cookie;
         }
     {{- end -}}
 
