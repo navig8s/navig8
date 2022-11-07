@@ -77,7 +77,7 @@ export const useRepoStore = defineStore('repo', () => {
   const entryManifest = ref<EntryManifest>()
 
   const fetchUsefulChartFiles = () =>
-    getRepoManifest(REPO_URL)
+    getRepoManifest()
       .then((entryManifestResult) => {
         entryManifest.value = entryManifestResult
 
