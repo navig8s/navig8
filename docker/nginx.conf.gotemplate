@@ -17,7 +17,6 @@ server {
             proxy_hide_header: cookie;
             proxy_hide_header: cookie2;
             proxy_hide_header: set-cookie;
-            proxy_hide_header: access-control-allow-origin;
         }
     {{- end -}}
 
