@@ -5,45 +5,37 @@ PROJECT_DIR="$(realpath "$CURRENT_DIR/../../")"
 TMP_DIR=/tmp_navig8
 
 function frontend {
-  pushd "$PROJECT_DIR/frontend" || exit 1
+  pushd "$PROJECT_DIR"
     pnpm build
     mv index.html dist/index.template.html
     mv .env.template dist/.env.template
     mv dist "$TMP_DIR/frontend"
-  popd || exit 1
-}
-
-function backend {
-  local BACKEND_DIR="$(realpath "$PROJECT_DIR/backend")"
-
-  pushd "$PROJECT_DIR/backend" || exit 1
-    ncc build -m -q -C start.js
-    mv dist "$TMP_DIR/backend"
-  popd || exit 1
+  popd
 }
 
 function ejs_renderer {
-  pushd "$PROJECT_DIR" || exit 1
+  pushd "$PROJECT_DIR"
     pnpm i -s html-prettify ejs ramda.pipe
 
-    pushd "$CURRENT_DIR" || exit 1
-      ncc build -m -q -C render_index.js
-      rm render_index.js
-      mv dist/index.js render_index.js
+    pushd "$CURRENT_DIR"
+      ncc build -m -q -C render_index.mjs
+      rm render_index.mjs
+      mv dist/index.mjs render_index.mjs
       rm -rf dist
-    popd || exit 1
-  popd || exit 1
+    popd
+  popd
 }
+
+pnpm install --frozen-lockfile
 
 mkdir $TMP_DIR
 
 frontend;
-backend;
 ejs_renderer;
 
 rm "$CURRENT_DIR/prepare"
 mv "$PROJECT_DIR/docker" "$TMP_DIR/docker"
-pushd / || exit 1
+pushd /
   rm -rf "$PROJECT_DIR"
   mv "$TMP_DIR" "$PROJECT_DIR"
-popd || exit 1
+popd

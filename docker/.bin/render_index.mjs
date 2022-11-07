@@ -1,8 +1,12 @@
-const fs = require('fs')
-const path = require('path')
-const ejs = require('ejs')
-const prettify = require('html-prettify')
-const pipe = require('ramda.pipe')
+import fs from 'fs'
+import path from 'path'
+import ejs from 'ejs'
+import prettify from 'html-prettify'
+import pipe from 'ramda.pipe'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const frontendDir = path.resolve(__dirname, '../../frontend')
 const manifestFilePath = path.resolve(frontendDir, 'manifest.json')

@@ -1,0 +1,25 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name _;
+
+    {{- if eq (getenv "NAVIG8_USE_PROXY" "false") "true" }}
+        location ~ ^/repo?\/$ {
+            return 404;
+        }
+
+        location /repo {
+            rewrite ^/repo/(.*) /$1 break;
+            proxy_pass {{ .Env.NAVIG8_REPO_URL }};
+            proxy_redirect off;
+            proxy_ssl_server_name on;
+        }
+    {{- end -}}
+
+    location / {
+        root /navig8/frontend/;
+        index index.html;
+        try_files $uri $uri/ =404;
+    }
+}

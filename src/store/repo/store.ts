@@ -7,7 +7,7 @@ import { isNil, pipe, prop } from 'ramda'
 import { UsefulChartFiles, JSONSchema, chartDecoder, EntryManifest } from '@/model/Repo'
 import { throwInline } from '@/utils/error'
 import { entryManifestDecoder, repoManifestDecoder } from '@/model/Repo'
-import { corsProxyRequest } from '@/httpRequest/corsProxyRequest'
+import { request } from '@/httpRequest/request'
 import {
   ChartManifestNotFoundError,
   ChartManifestStructureInvalidError,
@@ -22,8 +22,8 @@ import { readAsJSON, readAsString } from '@/utils/arrayBuffer'
 import { computed, ref } from 'vue'
 import { REPO_ENTRY, REPO_URL } from '@/environment'
 
-const getRepoManifest = (url: string) =>
-  corsProxyRequest(url.replace(/\/$/, '') + '/index.yaml', { cache: 'no-store' })
+const getRepoManifest = () =>
+  request('/repo/index.yaml')
     .then((response) => response.text())
     .then((raw) => yaml.load(raw, { filename: 'index.yaml', json: true }))
     .then(decodeWith(repoManifestDecoder(REPO_ENTRY), RepoManifestStructureInvalidError as any))
@@ -81,7 +81,7 @@ export const useRepoStore = defineStore('repo', () => {
       .then((entryManifestResult) => {
         entryManifest.value = entryManifestResult
 
-        return corsProxyRequest(entryManifestResult.urls[0], { cache: 'no-store' })
+        return request('/repo' + new URL(entryManifestResult.urls[0]).pathname)
       })
       .then((res) => res.arrayBuffer())
       .then(pako.inflate) // Decompress gzip using pako

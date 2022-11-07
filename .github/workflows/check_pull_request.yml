@@ -6,9 +6,6 @@ jobs:
   check:
     name: Check the PR Job
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.4

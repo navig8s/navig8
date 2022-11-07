@@ -1,4 +1,4 @@
-import { defineConfig, UserConfig } from 'vite'
+import { defineConfig, loadEnv, UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import { ViteEjsPlugin } from 'vite-plugin-ejs'
@@ -13,7 +13,22 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 export default ({ mode }) => {
   const isDev = mode === 'development'
 
+  const env = loadEnv(mode, __dirname, 'NAVIG8_')
+
   return defineConfig({
+    ...(isDev
+      ? {
+          server: {
+            proxy: {
+              '^/repo/.*': {
+                target: env.NAVIG8_REPO_URL.replace(/\/$/, ''),
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/repo/, ''),
+              },
+            },
+          },
+        }
+      : {}),
     build: {
       manifest: true,
       rollupOptions: {

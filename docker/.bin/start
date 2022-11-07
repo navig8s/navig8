@@ -72,54 +72,31 @@ function gen_frontend {
     <script src=\"${NAVIG8_BASE_URL}${FILE_NAME}\"></script>" \
     node \
     --no-deprecation \
-    "$CURRENT_DIR/render_index.js";
+    "$CURRENT_DIR/render_index.mjs";
 
   echo 'Generated env for frontend'
 }
 
 #######################################
-# Starts nginx server with reverse proxy to CORS proxy
-# Globals:
-#   PROJECT_DIR
-#######################################
-function start_nginx_with_cors_proxy {
-  local BACKEND_DIR="$(realpath "$PROJECT_DIR/backend")"
-  cp "$PROJECT_DIR/docker/nginx.with_cors_proxy.conf" /etc/nginx/sites-available/default
-
-  # Run them in parallel
-  node "$BACKEND_DIR/index.js" & /usr/sbin/nginx -g 'daemon off;';
-}
-
-#######################################
-# Starts nginx server for static files
-# Globals:
-#   PROJECT_DIR
-#######################################
-function start_nginx_without_cors_proxy {
-  cp "$PROJECT_DIR/docker/nginx.conf" /etc/nginx/sites-available/default
-  /usr/sbin/nginx -g 'daemon off;';
-}
-
-#######################################
 # Starts nginx server with or without default CORS proxy server
 # Globals:
-#   DEFAULT_NAVIG8_CORS_PROXY_URL
-#   NAVIG8_CORS_PROXY_URL
+#   NAVIG8_REPO_URL
+#   NAVIG8_USE_PROXY
 #######################################
 function start_nginx {
-  if [ "$DEFAULT_NAVIG8_CORS_PROXY_URL" = "$NAVIG8_CORS_PROXY_URL" ]; then
-    start_nginx_with_cors_proxy;
-  else
-    start_nginx;
-  fi
+  # Render nginx.conf to the nginx default server dir
+  gomplate \
+    --file "$PROJECT_DIR/docker/nginx.conf.gotemplate" \
+    --out /etc/nginx/http.d/default.conf
+
+  # Start nginx
+  /usr/sbin/nginx -g 'daemon off;';
 }
 ### Functions' declaration end
 
 CURRENT_DIR="$(dirname "$(realpath "$0")")";
 PROJECT_DIR="$(realpath "$CURRENT_DIR/../../")"
 
-DEFAULT_NAVIG8_CORS_PROXY_URL=/proxy/
-export NAVIG8_CORS_PROXY_URL=${NAVIG8_CORS_PROXY_URL:-"$DEFAULT_NAVIG8_CORS_PROXY_URL"}
 export NAVIG8_BASE_URL=${NAVIG8_BASE_URL:-/}
 
 check_required_env;

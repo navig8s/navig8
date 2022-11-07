@@ -8,7 +8,6 @@ interface CommonEnv {
   readonly NAVIG8_REPO_NAME: string
   readonly NAVIG8_PREDEFINED_NAMESPACE?: string
   readonly NAVIG8_DOCUMENTATION_URL?: string
-  readonly NAVIG8_CORS_PROXY_URL?: string
   readonly NAVIG8_COPYRIGHT?: string
   readonly NAVIG8_BASE_URL?: string
 }
