@@ -11,25 +11,21 @@ It's logic executes only on frontend side which guarantees no sensitive data fil
 ---
  
 ## Table of contents
-* [Assumptions](#assumptions)
+*   * [Assumptions](#assumptions)
 * [Local development](#local-development)
   + [Environment requirements](#environment-requirements)
-  + [To start locally:](#to-start-locally)
-    - [Using Makefile (from scratch)](#using-makefile-from-scratch)
-    - [Using Makefile (after everything is already installed and set)](#using-makefile-after-everything-is-already-installed-and-set)
-    - [Without Makefile (from scratch)](#without-makefile-from-scratch)
-    - [Without Makefile (after everything is already installed and set)](#without-makefile-after-everything-is-already-installed-and-set)
+  + [Starting from scratch](#starting-from-scratch)
 * [Customization options](#customization-options)
-  + [Environment variables for the FE:](#environment-variables-for-the-fe)
-  + [Environment variables for build in CORS proxy:](#environment-variables-for-build-in-cors-proxy)
+  + [Environment variables:](#environment-variables)
   + [Custom logo](#custom-logo)
   + [Themization](#themization)
   + [Overwriting CSS rules](#overwriting-css-rules)
 * [Deployment as FE static](#deployment-as-fe-static)
   + [An example of deployment flow](#an-example-of-deployment-flow)
 * [Deployment as Docker container](#deployment-as-docker-container)
+* [CORS proxy & security notes](#cors-proxy--security-notes)
 * [Examples](#examples)
-* [Roadmap](#roadmap)
+* [Roadmap](#roadmap)%
 
 ## Assumptions
 - Navig8's initial design is lightweight: all functionality is in the web client for easy web hosting.
@@ -45,7 +41,7 @@ It's logic executes only on frontend side which guarantees no sensitive data fil
 - [Node.js](https://nodejs.org/en/) with version ^16
 - [pnpm](https://pnpm.io/) with version ^7
 
-#### From scratch
+### Starting from scratch
 ```shell
 pnpm install
 cp .env.template .env.development.local # Add values for required variables there. Each variable is documented inside the file.
@@ -53,7 +49,7 @@ pnpm dev
 ```
 
 ## Customization options
-### Environment variables for the FE:
+### Environment variables:
 
 | Name                                                                              | Required | Description                                                                                                                                                                                                                                                           | Default |
 |-----------------------------------------------------------------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
@@ -62,7 +58,7 @@ pnpm dev
 | NAVIG8_REPO_NAME                                                                  | *        | The name of the repo used in the command `helm repo add $NAVIG8_REPO_NAME $NAVIG8_REPO_URL`                                                                                                                                                                           |         |
 | NAVIG8_PREDEFINED_NAMESPACE                                                       |          | The k8s namespace that will be created and used for the helm installation                                                                                                                                                                                             |         |
 | NAVIG8_DOCUMENTATION_URL                                                          |          | Link to the documentation for the specified helm chart that will be provided to the user                                                                                                                                                                              |         |
-| NAVIG8_USE_PROXY                                                                  |          | Boolean-like string ("false" or "true"). Used only in Docker env to tell it where it should create a proxy to bypass CORS headers                                                                                                                                     | "false" |
+| NAVIG8_USE_PROXY                                                                  |          | Boolean-like string ("false" or "true"). Used in development and Docker env to tell whether a proxy should be created to bypass CORS headers or not                                                                                                                   | "false" |
 | NAVIG8_COPYRIGHT                                                                  |          | A string that will be shown on the right of the `<footer>` element. If you want to add a dynamic year that will represent year at the momet - add `{year}` to the string. <br> <br> Example: `©{year} Kasten by Veeam®`                                               |         |
 | NAVIG8_FAVICON                                                                    |          | Icon that can be usually seen inside the tab of the browser and is usually important for crawlers of social media, chat applications, and search engines.                                                                                                             |         |
 | NAVIG8_SEO_TITLE                                                                  |          | A small string that represents the content of the page that can be usually seen inside the tab of the browser and is usually important for crawlers of social media, chat applications, and search engines.                                                           |         |
@@ -136,11 +132,11 @@ It is assumed that we are inside the process where `pnpm`, `git` and `node` are 
 git clone git@github.com:navig8s/navig8.git
 ```
 
-2. Install dependencies (If your environment doesn't support `Makefile` see [flow of installation without Makefile](#without-makefile-from-scratch))
+2. Install dependencies
 ```shell
-pnpm install -- 
+pnpm install --frozen-lockfile
 ```
-3. Setup at least required ENV variables declared in [this table](#build-time-environment-variables-for-the-fe).
+3. Setup at least required ENV variables declared in [this table](#environment-variables).
 You can do it inside the terminal process of course.
 ```shell
 NAVIG8_REPO_URL=repo_url
@@ -159,9 +155,17 @@ For example, you host navig8 at `https://navig8-instance.com`. This should be in
 Docker solution could be run in [k8s cluster](https://kubernetes.io/) or by one of the popular cloud services like [Google Cloud Run](https://cloud.google.com/run)
 
 1. Get last image from [ghcr registry](https://github.com/navig8s/navig8/pkgs/container/navig8)
-2. Set at least required environment variables from the list for [FE](#environment-variables-for-the-fe) and [CORS proxy](#environment-variables-for-build-in-cors-proxy)
+2. Set at least required environment variables from the [list](#environment-variables)
 3. Publish the Container's port `80`, forward requests to domain of your choice to it as it will be listened for requests.
 4. Run Container
+
+## CORS proxy & security notes
+It's highly recommended to set CORS headers ([Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)) for helm repo, that is going to be used by navig8 and thus handle CORS issue.
+
+In case it's not an option - there is a possibility to use a CORS proxy for Docker environment (see [settings](#environment-variables)).
+Current realisation of the CORS proxy that is available in Docker environment intended to be used as same-origin request that nginx proxies to the specified chart repo's url
+(request to `/repo` will be proxied to `NAVIG8_REPO_URL` in current implementation).
+
 
 ## Examples
 

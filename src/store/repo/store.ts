@@ -7,7 +7,7 @@ import { isNil, pipe, prop } from 'ramda'
 import { UsefulChartFiles, JSONSchema, chartDecoder, EntryManifest } from '@/model/Repo'
 import { throwInline } from '@/utils/error'
 import { entryManifestDecoder, repoManifestDecoder } from '@/model/Repo'
-import { request } from '@/httpRequest/request'
+import { request as repoRequest } from './request'
 import {
   ChartManifestNotFoundError,
   ChartManifestStructureInvalidError,
@@ -20,10 +20,10 @@ import {
 import { decodeWith } from '@/decoder'
 import { readAsJSON, readAsString } from '@/utils/arrayBuffer'
 import { computed, ref } from 'vue'
-import { REPO_ENTRY, REPO_URL } from '@/environment'
+import { REPO_ENTRY } from '@/environment'
 
 const getRepoManifest = () =>
-  request('/repo/index.yaml')
+  repoRequest('/index.yaml')
     .then((response) => response.text())
     .then((raw) => yaml.load(raw, { filename: 'index.yaml', json: true }))
     .then(decodeWith(repoManifestDecoder(REPO_ENTRY), RepoManifestStructureInvalidError as any))
@@ -81,7 +81,7 @@ export const useRepoStore = defineStore('repo', () => {
       .then((entryManifestResult) => {
         entryManifest.value = entryManifestResult
 
-        return request('/repo' + new URL(entryManifestResult.urls[0]).pathname)
+        return repoRequest(new URL(entryManifestResult.urls[0]).pathname)
       })
       .then((res) => res.arrayBuffer())
       .then(pako.inflate) // Decompress gzip using pako

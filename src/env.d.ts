@@ -10,6 +10,7 @@ interface CommonEnv {
   readonly NAVIG8_DOCUMENTATION_URL?: string
   readonly NAVIG8_COPYRIGHT?: string
   readonly NAVIG8_BASE_URL?: string
+  readonly NAVIG8_USE_PROXY?: string
 }
 
 interface ImportMetaEnv extends CommonEnv {

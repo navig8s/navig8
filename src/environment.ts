@@ -1,6 +1,8 @@
 export const REPO_URL = import.meta.env.NAVIG8_REPO_URL ?? window._env_?.NAVIG8_REPO_URL
 export const REPO_ENTRY = import.meta.env.NAVIG8_REPO_ENTRY ?? window._env_?.NAVIG8_REPO_ENTRY
 export const REPO_NAME = import.meta.env.NAVIG8_REPO_NAME ?? window._env_?.NAVIG8_REPO_NAME
+export const USE_PROXY =
+  (import.meta.env.NAVIG8_USE_PROXY ?? window._env_?.NAVIG8_USE_PROXY) === 'true'
 export const PREDEFINED_NAMESPACE =
   import.meta.env.NAVIG8_PREDEFINED_NAMESPACE ?? window._env_?.NAVIG8_PREDEFINED_NAMESPACE
 export const DOCUMENTATION_URL =

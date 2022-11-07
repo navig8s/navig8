@@ -16,7 +16,7 @@ export default ({ mode }) => {
   const env = loadEnv(mode, __dirname, 'NAVIG8_')
 
   return defineConfig({
-    ...(isDev
+    ...(isDev && env.NAVIG8_USE_PROXY === 'true'
       ? {
           server: {
             proxy: {
