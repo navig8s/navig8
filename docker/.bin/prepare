@@ -4,6 +4,8 @@ CURRENT_DIR="$(dirname "$(realpath "$0")")";
 PROJECT_DIR="$(realpath "$CURRENT_DIR/../../")"
 TMP_DIR=/tmp_navig8
 
+export PNPM_HOME=/usr/local/bin
+
 function frontend {
   pushd "$PROJECT_DIR"
     pnpm build
@@ -26,12 +28,18 @@ function ejs_renderer {
   popd
 }
 
+npm i -g pnpm
+pnpm i -g @vercel/ncc
 pnpm install --frozen-lockfile
 
 mkdir $TMP_DIR
 
 frontend;
 ejs_renderer;
+
+pnpm remove -g @vercel/ncc
+rm -rf $(pnpm store path)
+npm remove -g pnpm
 
 rm "$CURRENT_DIR/prepare"
 mv "$PROJECT_DIR/docker" "$TMP_DIR/docker"
