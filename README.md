@@ -23,6 +23,7 @@ It's logic executes only on frontend side which guarantees no sensitive data fil
 * [Deployment as FE static](#deployment-as-fe-static)
   + [An example of deployment flow](#an-example-of-deployment-flow)
 * [Deployment as Docker container](#deployment-as-docker-container)
+  + [An example of running docker image locally](#an-example-of-running-docker-image-locally)
 * [Proxy to bypass CORS & security notes](#proxy-to-bypass-cors--security-notes)
 * [Examples](#examples)
 * [Roadmap](#roadmap)
@@ -157,6 +158,16 @@ Docker solution could be run in [k8s cluster](https://kubernetes.io/) or by one 
 2. Set at least required environment variables from the [list](#environment-variables)
 3. Publish the Container's port `80`, forward requests to domain of your choice to it as it will be listened for requests.
 4. Run Container
+
+### An example of running docker image locally
+```
+docker pull ghcr.io/navig8s/navig8:1.0.0
+docker run -d -p 8080:80 \
+  --env NAVIG8_REPO_URL=repo_url \
+  --env NAVIG8_REPO_ENTRY=entry \
+  --env NAVIG8_REPO_NAME=name \
+  ghcr.io/navig8s/navig8:1.0.0
+```
 
 ## Proxy to bypass CORS & security notes
 It's highly recommended to set CORS headers ([Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)) for helm repo, that is going to be used by navig8 and thus handle CORS issue.
