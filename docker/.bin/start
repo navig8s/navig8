@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+
+### Functions' declaration start
+
+#######################################
+# Join array into a string with given one char delimiter.
+# Arguments:
+#   Delimiter
+#   ...array elements
+#######################################
+function join_by { local IFS="$1"; shift; echo "$*"; }
+
+#######################################
+# Checks if required env variables were passed. Exits otherwise.
+# Globals for subcommands:
+#   All variables from 'frontend/.env.template'
+# Arguments:
+#   Name of the env file
+#######################################
+function check_required_env {
+  local REQUIRED_ENV=(NAVIG8_REPO_URL NAVIG8_REPO_ENTRY NAVIG8_REPO_NAME)
+
+  for index in "${!REQUIRED_ENV[@]}"
+   do
+      varname="${REQUIRED_ENV[$index]}"
+      value=$(printf '%s\n' "${!varname}")
+
+      [[ -n "$value" ]] && unset -v "REQUIRED_ENV[$index]"
+    done
+
+  if (( ${#REQUIRED_ENV[@]} != 0 )); then
+    echo "Container failed to start, the following required env variables weren't found: $(join_by , "${REQUIRED_ENV[@]}")"
+    exit 1
+  fi
+}
+
+#######################################
+# Generates necessary files for the frontend to support env variables handling from the RUN stage
+# Globals:
+#   CURRENT_DIR
+#   PROJECT_DIR
+# Globals for subcommands:
+#   All variables from 'frontend/.env.template'
+# Arguments:
+#   Name of the env file
+#######################################
+function gen_frontend {
+  local FRONTEND_DIR="$(realpath "$PROJECT_DIR/frontend")"
+
+  local ENV_NAMES=($(grep -o '^[a-zA-Z0-9_]*=' "$FRONTEND_DIR/.env.template" | sed 's/.$//'))
+  local FILE_NAME="${1:-"env.runtime.js"}"
+  local FILE_PATH="${FRONTEND_DIR}/${FILE_NAME}"
+
+  # Create config file
+  rm -f "$FILE_PATH"
+  touch "$FILE_PATH"
+
+  # Add assignments
+  echo "window._env_ = {" >> "$FILE_PATH"
+
+  for varname in "${ENV_NAMES[@]}"
+  do
+    value=$(printf '%s\n' "${!varname}" | sed -e 's/\x27/\\\x27/g')
+    # If there is a value set, pass it to a file
+    [[ -n $value ]] && echo "  $varname: '$value'," >> "$FILE_PATH"
+  done
+
+  echo "};" >> "$FILE_PATH"
+
+  # Render index.html's ejs template
+  NAVIG8_TOP_HEAD="${NAVIG8_TOP_HEAD}
+    <script src=\"${NAVIG8_BASE_URL}${FILE_NAME}\"></script>" \
+    node \
+    --no-deprecation \
+    "$CURRENT_DIR/render_index.mjs";
+
+  echo 'Generated env for frontend'
+}
+
+#######################################
+# Starts nginx server with or without reverse proxy server
+# Globals:
+#   NAVIG8_REPO_URL
+#   NAVIG8_USE_PROXY
+#######################################
+function start_nginx {
+  # Render nginx.conf to the nginx default server dir
+  gomplate \
+    --file "$PROJECT_DIR/docker/nginx.conf.gotemplate" \
+    --out /etc/nginx/http.d/default.conf
+
+  # Linking logs and stdout
+  ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
+
+  # Start nginx
+  exec /usr/sbin/nginx -g 'daemon off;';
+}
+### Functions' declaration end
+
+CURRENT_DIR="$(dirname "$(realpath "$0")")";
+PROJECT_DIR="$(realpath "$CURRENT_DIR/../../")"
+
+export NAVIG8_BASE_URL=${NAVIG8_BASE_URL:-/}
+
+check_required_env;
+# Generate frontend runtime env and index.html
+gen_frontend env.runtime.js;
+start_nginx;

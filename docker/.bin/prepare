@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+CURRENT_DIR="$(dirname "$(realpath "$0")")";
+PROJECT_DIR="$(realpath "$CURRENT_DIR/../../")"
+DIST_DIR=/navig8-dist
+
+export PNPM_HOME=/usr/local/bin
+
+function frontend {
+  pushd "$PROJECT_DIR"
+    pnpm build
+    mv index.html dist/index.template.html
+    mv .env.template dist/.env.template
+    mv dist "$DIST_DIR/frontend"
+  popd
+}
+
+function ejs_renderer {
+  pushd "$PROJECT_DIR"
+    pnpm i -s html-prettify ejs ramda.pipe
+
+    pushd "$CURRENT_DIR"
+      ncc build -m -q -C render_index.mjs
+      rm render_index.mjs
+      mv dist/index.mjs render_index.mjs
+      rm -rf dist
+    popd
+  popd
+}
+
+npm i -g pnpm
+pnpm i -g @vercel/ncc
+pnpm install --frozen-lockfile
+
+mkdir $DIST_DIR
+
+frontend;
+ejs_renderer;
+
+rm "$CURRENT_DIR/prepare"
+mv "$PROJECT_DIR/docker" "$DIST_DIR/docker"

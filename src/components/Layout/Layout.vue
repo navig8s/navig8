@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { isNil } from 'ramda'
-import { NAVIG8_COPYRIGHT } from '@/environment'
+import { COPYRIGHT } from '@/environment'
 
 const props = defineProps<{ logo?: string }>()
 const logoRef = ref<HTMLDivElement>()
@@ -18,7 +18,7 @@ const programmaticLogo = computed(() => {
   return undefined
 })
 const copyright = computed(() =>
-  (NAVIG8_COPYRIGHT ?? '').replaceAll('{year}', new Date().getFullYear().toString()),
+  (COPYRIGHT ?? '').replaceAll('{year}', new Date().getFullYear().toString()),
 )
 </script>
 

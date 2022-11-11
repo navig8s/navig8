@@ -1,3 +1,4 @@
+import './dynamicPublicPath'
 import { createApp } from 'vue'
 import Main from './Main.vue'
 import { pipe } from 'ramda'

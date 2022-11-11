@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <% if (NAVIG8_TOP_HEAD) { %>
+      <%- NAVIG8_TOP_HEAD %>
+    <% } %>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="<%= NAVIG8_FAVICON %>" />
+    <% if (CSS) { %>
+      <link rel="stylesheet" href="<%= CSS %>">
+    <% } %>
+    <meta name="viewport" content="width=1400, initial-scale=1" />
+    <% for (const entry of NAVIG8_METAS) { %>
+      <meta name="<%= entry.name %>" content="<%= entry.content %>" />
+    <% } %>
+    <% for (const entry of NAVIG8_LINKS) { %>
+      <link
+        <% for (const [key, value] of Object.entries(entry)) { %>
+          <%= key %>="<%= value %>"
+        <% } %>
+      />
+    <% } %>
+    <title><%= NAVIG8_SEO_TITLE %></title>
+    <% if (NAVIG8_BOTTOM_HEAD) { %>
+      <%- NAVIG8_BOTTOM_HEAD %>
+    <% } %>
+  </head>
+  <body>
+    <% if (NAVIG8_TOP_BODY) { %>
+      <%- NAVIG8_TOP_BODY %>
+    <% } %>
+    <div id="app"></div>
+    <script type="module" src="<%= JS %>"></script>
+    <% if (NAVIG8_BOTTOM_BODY) { %>
+      <%- NAVIG8_BOTTOM_BODY %>
+    <% } %>
+  </body>
+</html>

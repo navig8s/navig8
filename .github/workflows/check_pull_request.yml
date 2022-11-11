@@ -6,12 +6,9 @@ jobs:
   check:
     name: Check the PR Job
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v2.2.4
         with:
           version: ^7
       - uses: actions/setup-node@v3
@@ -19,7 +16,7 @@ jobs:
           node-version: 16
           check-latest: true
           cache: pnpm
-          cache-dependency-path: frontend/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm type:check
