@@ -89,8 +89,11 @@ function start_nginx {
     --file "$PROJECT_DIR/docker/nginx.conf.gotemplate" \
     --out /etc/nginx/http.d/default.conf
 
+  # Linking logs and stdout
+  ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
+
   # Start nginx
-  /usr/sbin/nginx -g 'daemon off;';
+  exec /usr/sbin/nginx -g 'daemon off;';
 }
 ### Functions' declaration end
 

@@ -1,11 +1,23 @@
-FROM node:16.14.2-alpine
+FROM node:16.14.2-alpine as prepare
 
-COPY . /navig8
+RUN apk add --update --no-cache bash
+
+COPY . /navig8/
 WORKDIR /navig8
 
-RUN chmod 777 ./docker/.bin/prepare
-RUN apk add --update --no-cache nginx gomplate bash &&\
-    ./docker/.bin/prepare
+RUN ./docker/.bin/prepare
+
+# -----------
+
+FROM node:16.14.2-alpine
+
+RUN apk add --update --no-cache \
+      nginx \
+      gomplate \
+      bash
+
+COPY --from=prepare /navig8-dist /navig8
+WORKDIR /navig8
 
 EXPOSE 80
 
