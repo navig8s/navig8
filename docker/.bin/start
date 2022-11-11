@@ -78,7 +78,7 @@ function gen_frontend {
 }
 
 #######################################
-# Starts nginx server with or without default CORS proxy server
+# Starts nginx server with or without reverse proxy server
 # Globals:
 #   NAVIG8_REPO_URL
 #   NAVIG8_USE_PROXY

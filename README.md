@@ -11,7 +11,7 @@ It's logic executes only on frontend side which guarantees no sensitive data fil
 ---
  
 ## Table of contents
-*   * [Assumptions](#assumptions)
+* [Assumptions](#assumptions)
 * [Local development](#local-development)
   + [Environment requirements](#environment-requirements)
   + [Starting from scratch](#starting-from-scratch)
@@ -23,9 +23,9 @@ It's logic executes only on frontend side which guarantees no sensitive data fil
 * [Deployment as FE static](#deployment-as-fe-static)
   + [An example of deployment flow](#an-example-of-deployment-flow)
 * [Deployment as Docker container](#deployment-as-docker-container)
-* [CORS proxy & security notes](#cors-proxy--security-notes)
+* [Proxy to bypass CORS & security notes](#proxy-to-bypass-cors--security-notes)
 * [Examples](#examples)
-* [Roadmap](#roadmap)%
+* [Roadmap](#roadmap)
 
 ## Assumptions
 - Navig8's initial design is lightweight: all functionality is in the web client for easy web hosting.
@@ -131,7 +131,6 @@ It is assumed that we are inside the process where `pnpm`, `git` and `node` are 
 ```shell
 git clone git@github.com:navig8s/navig8.git
 ```
-
 2. Install dependencies
 ```shell
 pnpm install --frozen-lockfile
@@ -159,11 +158,11 @@ Docker solution could be run in [k8s cluster](https://kubernetes.io/) or by one 
 3. Publish the Container's port `80`, forward requests to domain of your choice to it as it will be listened for requests.
 4. Run Container
 
-## CORS proxy & security notes
+## Proxy to bypass CORS & security notes
 It's highly recommended to set CORS headers ([Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)) for helm repo, that is going to be used by navig8 and thus handle CORS issue.
 
-In case it's not an option - there is a possibility to use a CORS proxy for Docker environment (see [settings](#environment-variables)).
-Current realisation of the CORS proxy that is available in Docker environment is intended to be used for same-origin requests that nginx will proxy to the specified chart repo's url
+In case it's not an option - there is a possibility to use reverse proxy for Docker environment (see [settings](#environment-variables)).
+Current realisation of the reverse proxy that is available in Docker environment is intended to be used for same-origin requests that nginx will proxy to the specified chart repo's url
 (frontend requests `/repo` that is proxied to `NAVIG8_REPO_URL` in current implementation).
 
 ## Examples
@@ -172,7 +171,7 @@ Current realisation of the CORS proxy that is available in Docker environment is
 
 ## Roadmap
 
-- [x] Prebuilt Docker image with CORS proxy inside
+- [x] Prebuilt Docker image with reverse proxy to bypass CORS inside
 - [ ] Possibility to skip `values.schema.json` file for the form construction
 - [ ] Possibility to view and edit `values.yaml` file
 - [ ] Dark theme support
