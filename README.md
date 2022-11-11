@@ -166,7 +166,7 @@ docker run -d -p 8080:80 \
   --env NAVIG8_REPO_URL=repo_url \
   --env NAVIG8_REPO_ENTRY=entry \
   --env NAVIG8_REPO_NAME=name \
-  ghcr.io/navig8s/navig8:1.0.0
+  ghcr.io/navig8s/navig8:latest
 ```
 
 ## Proxy to bypass CORS & security notes
