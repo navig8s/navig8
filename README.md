@@ -161,12 +161,12 @@ Docker solution could be run in [k8s cluster](https://kubernetes.io/) or by one 
 
 ### An example of running docker image locally
 ```
-docker pull ghcr.io/navig8s/navig8:latest
+docker pull ghcr.io/navig8s/navig8
 docker run -d -p 8080:80 \
   --env NAVIG8_REPO_URL=repo_url \
   --env NAVIG8_REPO_ENTRY=entry \
   --env NAVIG8_REPO_NAME=name \
-  ghcr.io/navig8s/navig8:latest
+  ghcr.io/navig8s/navig8
 ```
 
 ## Proxy to bypass CORS & security notes
