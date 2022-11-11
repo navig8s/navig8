@@ -161,7 +161,7 @@ Docker solution could be run in [k8s cluster](https://kubernetes.io/) or by one 
 
 ### An example of running docker image locally
 ```
-docker pull ghcr.io/navig8s/navig8:1.0.0
+docker pull ghcr.io/navig8s/navig8:latest
 docker run -d -p 8080:80 \
   --env NAVIG8_REPO_URL=repo_url \
   --env NAVIG8_REPO_ENTRY=entry \
