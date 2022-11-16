@@ -8,7 +8,7 @@ export PNPM_HOME=/usr/local/bin
 
 function frontend {
   pushd "$PROJECT_DIR"
-    pnpm build
+    NAVIG8_BUILD_FOR_DOCKER=true NAVIG8_BUILD_AS_MANIFEST=true pnpm build
     mv index.html dist/index.template.html
     mv .env.template dist/.env.template
     mv dist "$DIST_DIR/frontend"

@@ -13,7 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 export default ({ mode }) => {
   const isDev = mode === 'development'
 
-  const env = loadEnv(mode, __dirname, 'NAVIG8_')
+  const env = Object.assign(process.env, loadEnv(mode, __dirname, 'NAVIG8_'))
 
   return defineConfig({
     ...(isDev && env.NAVIG8_USE_PROXY === 'true'
@@ -29,12 +29,16 @@ export default ({ mode }) => {
           },
         }
       : {}),
-    build: {
-      manifest: true,
-      rollupOptions: {
-        input: path.resolve(__dirname, './src/main.ts'),
-      },
-    },
+    ...(env.NAVIG8_BUILD_AS_MANIFEST === 'true'
+      ? {
+          build: {
+            manifest: true,
+            rollupOptions: {
+              input: path.resolve(__dirname, './src/main.ts'),
+            },
+          },
+        }
+      : {}),
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
@@ -42,9 +46,9 @@ export default ({ mode }) => {
     },
     plugins: [
       vue(),
-      isDev &&
+      env.NAVIG8_BUILD_AS_MANIFEST !== 'true' &&
         ViteEjsPlugin((config) => ({
-          JS: 'http://localhost:5173/src/main.ts',
+          JS: './src/main.ts',
           CSS: undefined,
           NAVIG8_SEO_TITLE: config.env.NAVIG8_SEO_TITLE ?? '',
           NAVIG8_FAVICON: config.env.NAVIG8_FAVICON ?? '',
@@ -55,7 +59,7 @@ export default ({ mode }) => {
           NAVIG8_TOP_BODY: config.env.NAVIG8_TOP_BODY,
           NAVIG8_BOTTOM_BODY: config.env.NAVIG8_BOTTOM_BODY,
         })),
-      isDev && useDynamicPublicPath(),
+      env.NAVIG8_BUILD_FOR_DOCKER === 'true' && useDynamicPublicPath(),
     ].filter(Boolean),
     envPrefix: 'NAVIG8_',
   })
