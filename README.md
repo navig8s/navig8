@@ -31,10 +31,10 @@ Its logic is executed only on frontend side which guarantees no sensitive data f
 ## Assumptions
 - Navig8's initial design is lightweight: all functionality is in the web client for easy web hosting.
   - There is no persistence for values or back-end requirements, see the [Roadmap](#roadmap) section for more on this topic.
-- The target Helm Chart repository is network accessible to the web client running Navig8.- 
-  - The target Helm Chart has [values.schema.json](https://helm.sh/docs/topics/charts/#schema-files)
-  - OPTIONAL: the target Helm Chart has a `README.md`.
-  - Navig8 leverages existing Helm Chart value specifications, see the [Roadmap](#roadmap) section for more on this topic.
+- The target Helm Chart repository is network accessible to the web client running Navig8.
+- The target Helm Chart has [values.schema.json](https://helm.sh/docs/topics/charts/#schema-files)
+- OPTIONAL: the target Helm Chart has a `README.md`.
+- Navig8 leverages existing Helm Chart value specifications, see the [Roadmap](#roadmap) section for more on this topic.
 - Navig8 provides `helm` commands for execution.
 
 ## Local development
