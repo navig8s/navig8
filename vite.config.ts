@@ -13,7 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 export default ({ mode }) => {
   const isDev = mode === 'development'
 
-  const env = Object.assign(process.env, loadEnv(mode, __dirname, 'NAVIG8_'))
+  const env = Object.assign(loadEnv(mode, __dirname, 'NAVIG8_'), process.env)
 
   return defineConfig({
     ...(isDev && env.NAVIG8_USE_PROXY === 'true'
