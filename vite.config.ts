@@ -5,6 +5,9 @@ import { ViteEjsPlugin } from 'vite-plugin-ejs'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { useDynamicPublicPath } from 'vite-plugin-dynamic-publicpath'
+import banner from 'vite-plugin-banner'
+// @ts-ignore
+import licenseBanner from './license-banner.txt'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -12,6 +15,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 /** @type {UserConfig} */
 export default ({ mode }) => {
   const isDev = mode === 'development'
+  const isProd = mode === 'production'
 
   const env = Object.assign(loadEnv(mode, __dirname, 'NAVIG8_'), process.env)
 
@@ -60,6 +64,7 @@ export default ({ mode }) => {
           NAVIG8_BOTTOM_BODY: config.env.NAVIG8_BOTTOM_BODY,
         })),
       env.NAVIG8_BUILD_FOR_DOCKER === 'true' && useDynamicPublicPath(),
+      isProd && banner(licenseBanner),
     ].filter(Boolean),
     envPrefix: 'NAVIG8_',
   })
