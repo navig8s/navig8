@@ -20,10 +20,12 @@ import {
 import { decodeWith } from '@/decoder'
 import { readAsJSON, readAsString } from '@/utils/arrayBuffer'
 import { computed, ref } from 'vue'
-import { REPO_ENTRY } from '@/environment'
+import { REPO_ENTRY, REPO_URL } from '@/environment'
+
+const repoPath = () => new URL(REPO_URL).pathname.replace(/\/$/, '')
 
 const getRepoManifest = () =>
-  repoRequest('/index.yaml')
+  repoRequest(repoPath() + '/index.yaml')
     .then((response) => response.text())
     .then((raw) => yaml.load(raw, { filename: 'index.yaml', json: true }))
     .then(decodeWith(repoManifestDecoder(REPO_ENTRY), RepoManifestStructureInvalidError as any))
