@@ -49,6 +49,11 @@ cp .env.template .env.development.local # Add values for required variables ther
 pnpm dev
 ```
 
+### Building you own docker image from the repository root
+```shell
+docker build -f ./docker/Dockerfile .
+```
+
 ## Customization options
 ### Environment variables:
 
