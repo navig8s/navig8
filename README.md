@@ -9,7 +9,7 @@ The Navig8 web user interface simplifies Kubernetes application deployment by gu
 Its logic is executed only on frontend side which guarantees no sensitive data filled in its form will ever be implicitly processed somewhere outside user's computer.
 
 ---
- 
+
 ## Table of contents
 * [Assumptions](#assumptions)
 * [Local development](#local-development)
@@ -54,19 +54,19 @@ pnpm dev
 
 | Name                                                                              | Required | Description                                                                                                                                                                                                                                                           | Default |
 |-----------------------------------------------------------------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| NAVIG8_REPO_URL                                                                   | *        | Url to the helm repository that is usually used in `helm add repo` command                                                                                                                                                                                            |         |
-| NAVIG8_REPO_ENTRY                                                                 | *        | Entry is a unique key of the entries hash map (<br>https://helm.sh/docs/topics/chart_repository/#the-index-file<br>)                                                                                                                                                  |         |
-| NAVIG8_REPO_NAME                                                                  | *        | The name of the repo used in the command `helm repo add $NAVIG8_REPO_NAME $NAVIG8_REPO_URL`                                                                                                                                                                           |         |
-| NAVIG8_PREDEFINED_NAMESPACE                                                       |          | The k8s namespace that will be created and used for the helm installation                                                                                                                                                                                             |         |
-| NAVIG8_DOCUMENTATION_URL                                                          |          | Link to the documentation for the specified helm chart that will be provided to the user                                                                                                                                                                              |         |
-| NAVIG8_USE_PROXY                                                                  |          | Boolean-like string ("false" or "true"). Used in development and Docker env to tell whether a proxy should be created to bypass CORS headers or not                                                                                                                   | "false" |
-| NAVIG8_COPYRIGHT                                                                  |          | A string that will be shown on the right of the `<footer>` element. If you want to add a dynamic year that will represent year at the momet - add `{year}` to the string. <br> <br> Example: `©{year} Kasten by Veeam®`                                               |         |
-| NAVIG8_FAVICON                                                                    |          | Icon that can be usually seen inside the tab of the browser and is usually important for crawlers of social media, chat applications, and search engines.                                                                                                             |         |
-| NAVIG8_SEO_TITLE                                                                  |          | A small string that represents the content of the page that can be usually seen inside the tab of the browser and is usually important for crawlers of social media, chat applications, and search engines.                                                           |         |
-| NAVIG8_METAS                                                                      |          | An array as JSON string with data for custom `<meta>` elements in html<br><br>The structure is (Typescript definition):<br>`type Metas = Array<{name: string, content: string}>`<br><br>Example: <br>`[{"name": "description", "content": "This is my description"}]` | '[]'    |
-| NAVIG8_LINKS                                                                      |          | An array as JSON string with attributes for custom `<link>` elements in html<br><br>The structure is (Typescript definition):<br>`type Links = Array<Record<string, string>>`<br><br>Example: `[{"rel": "canonical", "href": "http://example.com"}]`                  | '[]'    |
-| NAVIG8_TOP_HEAD<br/>NAVIG8_BOTTOM_HEAD<br/>NAVIG8_TOP_BODY<br/>NAVIG8_BOTTOM_BODY |          | Raw html that will be inserted in the index.html and will be statically served. Each variable name represents location where html will be inserted.                                                                                                                   | ""      |
-| NAVIG8_BASE_URL                                                                   |          | URL relative to the domain root or an absolute one that represents path to the frontend folder with built static<br/><br/>Example: `/pages/navig8`                                                                                                                    | '/'     |
+| NAVIG8_REPO_URL                                                                   | Yes      | Url to the helm repository that is usually used in `helm add repo` command                                                                                                                                                                                            |         |
+| NAVIG8_REPO_ENTRY                                                                 | Yes      | Entry is a unique key of the entries hash map in the $NAVIGATE_REPO_URL index.yaml (<br>https://helm.sh/docs/topics/chart_repository/#the-index-file<br>)                                                                                                             |         |
+| NAVIG8_REPO_NAME                                                                  | Yes      | A repo name, used in the command `helm repo add $NAVIG8_REPO_NAME $NAVIG8_REPO_URL` (<br>https://helm.sh/docs/helm/helm_repo_add/<br>)                                                                                                                                |         |
+| NAVIG8_PREDEFINED_NAMESPACE                                                       | Optional | The Kubernetes namespace that will be created and used for the helm installation                                                                                                                                                                                      |         |
+| NAVIG8_DOCUMENTATION_URL                                                          | Optional | Link to the documentation for the specified helm chart that will be provided to the user                                                                                                                                                                              |         |
+| NAVIG8_USE_PROXY                                                                  | Optional | Boolean-like string ("false" or "true"). Used in development and Docker env to tell whether a proxy should be created to bypass CORS headers or not                                                                                                                   | "false" |
+| NAVIG8_COPYRIGHT                                                                  | Optional | A string that will be shown on the right of the `<footer>` element. If you want to add a dynamic year that will represent year at the momet - add `{year}` to the string. <br> <br> Example: `©{year} Kasten by Veeam®`                                               |         |
+| NAVIG8_FAVICON                                                                    | Optional | Icon that can be usually seen inside the tab of the browser and is usually important for crawlers of social media, chat applications, and search engines.                                                                                                             |         |
+| NAVIG8_SEO_TITLE                                                                  | Optional | A small string that represents the content of the page that can be usually seen inside the tab of the browser and is usually important for crawlers of social media, chat applications, and search engines.                                                           |         |
+| NAVIG8_METAS                                                                      | Optional | An array as JSON string with data for custom `<meta>` elements in html<br><br>The structure is (Typescript definition):<br>`type Metas = Array<{name: string, content: string}>`<br><br>Example: <br>`[{"name": "description", "content": "This is my description"}]` | '[]'    |
+| NAVIG8_LINKS                                                                      | Optional | An array as JSON string with attributes for custom `<link>` elements in html<br><br>The structure is (Typescript definition):<br>`type Links = Array<Record<string, string>>`<br><br>Example: `[{"rel": "canonical", "href": "http://example.com"}]`                  | '[]'    |
+| NAVIG8_TOP_HEAD<br/>NAVIG8_BOTTOM_HEAD<br/>NAVIG8_TOP_BODY<br/>NAVIG8_BOTTOM_BODY | Optional | Raw HTML that will be inserted in the index.html and will be statically served. Each variable name represents location where html will be inserted.                                                                                                                   | ""      |
+| NAVIG8_BASE_URL                                                                   | Optional | URL relative to the domain root or an absolute one that represents path to the frontend folder with built static<br/><br/>Example: `/pages/navig8`                                                                                                                    | '/'     |
 
 ### Custom logo
 By default, an `icon` from the manifest of the specified helm repo is used as a logo in the header of the interface.
@@ -145,7 +145,7 @@ NAVIG8_REPO_NAME=name
 ```
 4. Build the frontend
 ```shell
-pnpm build 
+pnpm build
 ```
 5. Copy the output of FE static inside `<REPO_ROOT>/dist` folder anywhere you want.
 6. Set `Access-Control-Allow-Origin` for the helm repo you've specified so navig8 could fetch all files it needs.
@@ -159,18 +159,19 @@ Docker solution could be run in [k8s cluster](https://kubernetes.io/) or by one 
 3. Publish the Container's port `80`, forward requests to domain of your choice to it as it will be listened for requests.
 4. Run Container
 
-### An example of running docker image locally
+### An example of running the Docker image locally
 ```
 docker pull ghcr.io/navig8s/navig8
 docker run -d -p 8080:80 \
-  --env NAVIG8_REPO_URL=repo_url \
-  --env NAVIG8_REPO_ENTRY=entry \
-  --env NAVIG8_REPO_NAME=name \
+  --env NAVIG8_REPO_URL=https://charts.kasten.io \
+  --env NAVIG8_REPO_ENTRY=k10 \
+  --env NAVIG8_REPO_NAME=kasten-k10 \
+  --env NAVIG8_USE_PROXY=true \
   ghcr.io/navig8s/navig8
 ```
 
 ## Proxy to bypass CORS & security notes
-It's highly recommended to set CORS headers ([Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)) for helm repo, that is going to be used by navig8 and thus handle CORS issue.
+It's highly recommended to set CORS headers ([Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)) for the Helm repo, that is going to be used by Navig8 and thus handle CORS issue.
 
 In case it's not an option - there is a possibility to use reverse proxy for Docker environment (see [settings](#environment-variables)).
 Current realisation of the reverse proxy that is available in Docker environment is intended to be used for same-origin requests that nginx will proxy to the specified chart repo's url
@@ -178,7 +179,7 @@ Current realisation of the reverse proxy that is available in Docker environment
 
 ## Examples
 
-- [Coming soon]: [install.kasten.io](https://install.kasten.io) is a public Navig8 instance for the K10 Helm Chart.
+- [install.kasten.io](https://install.kasten.io) is a public Navig8 instance for the K10 Helm Chart.
 
 ## Roadmap
 
